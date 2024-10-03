@@ -13,9 +13,19 @@
     "windows": [
       {
         "title": "node-verson-controller",
-        "width": 800,
-        "height": 600
-        
+        "width": 600,
+        "height": 110,
+        "decorations": false,
+        "resizable": false,
+        "transparent": false,
+        "alwaysOnTop": true,
+        "center": true,
+        "closable": true,
+        "hiddenTitle": true,
+        "maximizable": true,
+        "minimizable": true,
+        "shadow": true,
+        "label": "main"
       }
     ],
     "security": {
