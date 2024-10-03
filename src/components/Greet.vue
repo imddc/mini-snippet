@@ -13,16 +13,14 @@ async function greet() {
 
 async function myFn( ) {
   const res = await invoke<string>("my_fn");
-  customFn.value = res
+  customFn.value += res
 }
 </script>
 
 <template>
-
   <button @click="myFn" >
     click me + {{ customFn }}
   </button>
-
 
   <form class="row" @submit.prevent="greet">
     <input id="greet-input" v-model="name" placeholder="Enter a name..." />
