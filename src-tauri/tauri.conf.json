@@ -14,21 +14,27 @@
       {
         "title": "node-verson-controller",
         "width": 600,
+        "height": 100,
         "decorations": false,
+        "transparent": true,
         "resizable": false,
-        "transparent": false,
         "alwaysOnTop": true,
         "center": true,
         "closable": true,
         "hiddenTitle": true,
         "maximizable": true,
         "minimizable": true,
-        "shadow": true,
+        "shadow": false,
         "label": "main"
       }
     ],
+    "macOSPrivateApi": true ,
     "security": {
       "csp": null
+    },
+    "trayIcon": {
+      "iconPath": "./icons/icon.png",
+      "iconAsTemplate": true
     }
   },
   "bundle": {
