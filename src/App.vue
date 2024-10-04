@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import {ref} from 'vue'
-const value = ref("")
+import { ref } from 'vue'
+
+const value = ref('')
 </script>
 
 <template>
-  <div data-tauri-drag-region class="titlebar"></div>
+  <div data-tauri-drag-region class="titlebar" />
   <div class="container">
-     <input v-model="value" placeholder="输入代码片段标题" />
+    <input v-model="value" placeholder="输入代码片段标题">
   </div>
 </template>
-
 
 <style lang="scss" scoped>
 .container {

@@ -1,14 +1,16 @@
 {
   "name": "node-verson-controller",
-  "private": true,
-  "version": "0.1.0",
   "type": "module",
+  "version": "0.1.0",
+  "private": true,
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc --noEmit && vite build",
     "preview": "vite preview",
     "tauri": "tauri",
-    "build:mac": "tauri build --target aarch64-apple-darwin"
+    "build:mac": "tauri build --target aarch64-apple-darwin",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix ."
   },
   "dependencies": {
     "@tauri-apps/api": ">=2.0.0",
@@ -16,8 +18,11 @@
     "vue": "^3.3.4"
   },
   "devDependencies": {
+    "@antfu/eslint-config": "^3.7.3",
     "@tauri-apps/cli": ">=2.0.0",
+    "@types/node": "^22.7.4",
     "@vitejs/plugin-vue": "^5.0.5",
+    "eslint": "^9.11.1",
     "sass": "^1.79.4",
     "typescript": "^5.2.2",
     "vite": "^5.3.1",
