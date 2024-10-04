@@ -1,6 +1,6 @@
 <script setup>
 import { SaveIcon } from 'lucide-vue-next'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 
 const snippet = ref('')
 const savedSnippets = ref([])
