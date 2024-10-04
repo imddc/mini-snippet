@@ -1,5 +1,5 @@
 [package]
-name = "node-verson-controller"
+name = "node-version-controller"
 version = "0.1.0"
 description = "A Tauri App"
 authors = [ "you" ]
@@ -11,7 +11,7 @@ edition = "2021"
 # The `_lib` suffix may seem redundant but it is necessary
 # to make the lib name unique and wouldn't conflict with the bin name.
 # This seems to be only an issue on Windows, see https://github.com/rust-lang/cargo/issues/8519
-name = "node_verson_controller_lib"
+name = "node_version_controller_lib"
 crate-type = [
   "staticlib",
   "cdylib",
@@ -22,7 +22,8 @@ crate-type = [
 tauri-build = { version = "2.0.0", features = [] }
 
 [dependencies]
-tauri = { version = "2.0.0", features = [] }
+tauri = { version = "2.0.0", features = ["tray-icon"] }
 tauri-plugin-shell = "2.0.0"
 serde = { version = "1", features = [ "derive" ] }
 serde_json = "1"
+tauri-plugin-dialog = "2"

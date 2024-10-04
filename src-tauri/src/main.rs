@@ -2,4 +2,5 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 fn main() {
-    node_verson_controller_lib::run() }
+    node_version_controller_lib::run();
+}
