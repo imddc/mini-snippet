@@ -1,6 +1,7 @@
 import type { Snippet } from '@/types/snippet'
 import { snippets } from '@/constants/mockData'
 import { store } from '@/plugins/pinia'
+import { categories } from '@vueuse/core/metadata.cjs'
 import { defineStore } from 'pinia'
 
 interface SnippetStore {
@@ -14,6 +15,29 @@ const snippetsStore = defineStore('snippets', {
   actions: {
     initSnippets() {
       this.snippets = snippets
+    },
+    getCategories() {
+      return Object.keys(this.snippets)
+    },
+    getSubcategories(category: string) {
+      return Object.keys(this.snippets[category] || {})
+    },
+    getAllSubcategories() {
+      const result: string[] = []
+      Object.keys(this.snippets).forEach((category) => {
+        Object.keys(this.snippets[category]).forEach((subcategory) => {
+          result.push(subcategory)
+        })
+      })
+      return result
+    },
+    // 通过正则匹配子分类
+    matchSubcategories(subcategory: string) {
+      const regex = new RegExp(subcategory)
+      return this.getAllSubcategories().filter(sub => regex.test(sub))
+    },
+    getSnippets(subcategory: string) {
+      return Object.values(this.snippets).flatMap(category => category[subcategory] || [])
     },
   },
 })

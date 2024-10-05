@@ -1,15 +1,30 @@
 <script setup lang="ts">
 import Input from '@/components/ui/input/Input.vue'
 import { Events } from '@/constants/eventEnums'
+import { useSnippetsStoreWithOut } from '@/store/snippetsStore'
 import { emitEvent } from '@/utils/eventHandler'
 import { EggIcon } from 'lucide-vue-next'
-import { ref } from 'vue'
+import { ref, watchEffect } from 'vue'
 
-const snippet = ref('')
+const snippetsStore = useSnippetsStoreWithOut()
+
+const subCategory = ref('')
+
+const chooseSubCategory = ref('')
+const foundSubcategories = ref<string[]>([])
 
 function goContent() {
   emitEvent(Events.OPEN_CONTENT_WINDOW)
 }
+
+watchEffect(() => {
+  if (subCategory.value) {
+    foundSubcategories.value = snippetsStore.matchSubcategories(subCategory.value)
+  }
+  else {
+    foundSubcategories.value = []
+  }
+})
 </script>
 
 <template>
@@ -19,10 +34,18 @@ function goContent() {
       <div class="flex-between gap-2 p-3">
         <div class="flex-1">
           <Input
-            v-model="snippet"
+            v-model.trim="subCategory"
             placeholder="Enter your code snippet here..."
             class="!focus-visible:ring-0 h-12 border-0 ring-0 ring-gray-600 focus-visible:ring-0 focus-visible:ring-offset-0"
           />
+
+          <div>
+            <ul>
+              <li v-for="sub in foundSubcategories" :key="sub" @click="chooseSubCategory = sub">
+                {{ sub }}
+              </li>
+            </ul>
+          </div>
         </div>
 
         <button
