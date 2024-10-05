@@ -27,9 +27,9 @@ function selectSubcategory(subcategory: string) {
 </script>
 
 <template>
-  <div class="min-h-screen rounded-lg bg-gradient-to-br from-purple-700 to-blue-500">
+  <div class="content-animate-gradient min-h-screen rounded-lg">
     <!-- 控制按钮区域 -->
-    <div data-tauri-drag-region class="flex-between h-[var(--header-height)] cursor-pointer p-4">
+    <div data-tauri-drag-region class="flex-between h-[var(--content-header-height)] cursor-pointer p-4">
       <button class="rounded bg-blue-600 px-4 py-2 text-white transition duration-300 hover:bg-blue-700">
         Add New Snippet
       </button>
@@ -37,7 +37,7 @@ function selectSubcategory(subcategory: string) {
 
     <!-- 内容区域 -->
     <div class="p-4">
-      <div class="flex h-[calc(100vh-2rem-var(--header-height))] gap-2">
+      <div class="flex h-[calc(100vh-2rem-var(--content-header-height))] gap-2">
         <!-- 左侧导航菜单 -->
         <div class="flex w-64 shrink-0 gap-2 text-white">
           <!-- 大分类 -->
@@ -81,25 +81,3 @@ function selectSubcategory(subcategory: string) {
     </div>
   </div>
 </template>
-
-<style>
-:root {
-  --header-height: 80px;
-}
-
-.animate-gradient-x {
-  background-size: 400% 400%;
-  animation: gradient-x 5s ease infinite;
-}
-
-@keyframes gradient-x {
-  0%,
-  100% {
-    background-position: 0% 50%;
-  }
-
-  50% {
-    background-position: 100% 50%;
-  }
-}
-</style>
