@@ -1,8 +1,8 @@
 import { createApp } from 'vue'
-// import { setupSystemTray } from '~/plugins/tray'
 import App from './App.vue'
+import { setupRouter } from './plugins/router'
 import './style/index.css'
 
-// setupSystemTray()
-
-createApp(App).mount('#app')
+const app = createApp(App)
+setupRouter(app)
+app.mount('#app')
