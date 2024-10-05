@@ -1,10 +1,11 @@
 import { WebviewWindow } from '@tauri-apps/api/webviewWindow'
 import { Events } from '~/constants/eventEnums'
 import { WindowLabel } from '~/constants/windowEnums'
-import { useEvent } from '~/utils/eventHandler'
+import { useMainWindowStoreWithOut } from '~/store/mainWindowStore'
+import { emitEvent, useEvent } from '~/utils/eventHandler'
 import { getWindow } from '~/utils/window'
 
-let isMainWindowShow = true
+const mainWindowStore = useMainWindowStoreWithOut()
 
 export function registerEvents() {
   useEvent(Events.OPEN_CONTENT_WINDOW, async () => {
@@ -26,19 +27,16 @@ export function registerEvents() {
   useEvent(Events.OPEN_MAIN_WINDOW, async () => {
     const mainWindow = await getWindow(WindowLabel.MAIN)
     mainWindow && mainWindow.show()
+    mainWindowStore.isShow = true
   })
 
   useEvent(Events.CLOSE_MAIN_WINDOW, async () => {
     const mainWindow = await getWindow(WindowLabel.MAIN)
-    mainWindow && mainWindow.close()
+    mainWindow && mainWindow.hide()
+    mainWindowStore.isShow = false
   })
 
   useEvent(Events.TOGGLE_MAIN_WINDOW, async () => {
-    const mainWindow = await getWindow(WindowLabel.MAIN)
-    if (!mainWindow) {
-      return
-    }
-    isMainWindowShow ? mainWindow.hide() : mainWindow.show()
-    isMainWindowShow = !isMainWindowShow
+    emitEvent(mainWindowStore.isShow ? Events.CLOSE_MAIN_WINDOW : Events.OPEN_MAIN_WINDOW)
   })
 }

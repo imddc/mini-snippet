@@ -1,4 +1,5 @@
 import { createApp } from 'vue'
+import { setupStore } from '~/plugins/pinia'
 import { registerEvents } from '~/utils/eventRegister'
 import { initKeyMaps } from '~/utils/keyMaps'
 import App from './App.vue'
@@ -7,6 +8,7 @@ import './style/index.css'
 
 const app = createApp(App)
 setupRouter(app)
+setupStore(app)
 app.mount('#app')
 
 registerEvents()
