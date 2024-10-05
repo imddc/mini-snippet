@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { SaveIcon } from 'lucide-vue-next'
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { emitEvent } from '~/utils/eventHandler'
+import { Events } from '~/constants/eventEnums'
 
-const router = useRouter()
 const snippet = ref('')
 
 function goContent() {
-  router.push('/content')
+  emitEvent(Events.OPEN_CONTENT_WINDOW)
 }
 </script>
 

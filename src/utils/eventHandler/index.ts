@@ -1,7 +1,7 @@
-import type { Events } from './eventEnums'
+import type { Events } from '../../constants/eventEnums'
 import { EventHandler } from './eventBus'
 
-export const eventHandler = new EventHandler()
+const eventHandler = new EventHandler()
 
 export function useEvent(event: Events, callback: (...args: any[]) => void) {
   eventHandler.on(event, callback)
@@ -10,3 +10,5 @@ export function useEvent(event: Events, callback: (...args: any[]) => void) {
 export function emitEvent(event: Events, ...args: any[]) {
   eventHandler.emit(event, ...args)
 }
+
+export default eventHandler
