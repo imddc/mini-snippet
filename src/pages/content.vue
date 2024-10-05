@@ -38,13 +38,9 @@ function selectSnippet(snippet) {
 }
 
 function editSnippet() {
-  // 实现编辑逻辑
-  console.log('编辑片段:', selectedSnippet.value)
 }
 
 function deleteSnippet() {
-  // 实现删除逻辑
-  console.log('删除片段:', selectedSnippet.value)
   selectedSnippet.value = null
 }
 </script>
@@ -91,7 +87,7 @@ function deleteSnippet() {
           {{ selectedSnippet.name }}
         </h2>
         <div class="rounded-md bg-gray-100 p-4">
-          <pre><code class="language-javascript">{{ selectedSnippet.code }}</code></pre>
+          <pre><code>{{ selectedSnippet.code }}</code></pre>
         </div>
         <div class="mt-4 flex justify-end">
           <button
