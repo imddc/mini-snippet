@@ -1,4 +1,5 @@
 import type { App } from 'vue'
+import { Webview } from '@tauri-apps/api/webview'
 import { Window } from '@tauri-apps/api/window'
 import { createRouter, createWebHistory } from 'vue-router'
 import { routes } from 'vue-router/auto-routes'
@@ -8,16 +9,24 @@ const router = createRouter({
   routes,
 })
 
-router.beforeEach(async (to, _, next) => {
+router.beforeEach(async (to, _from, next) => {
   if (to.name === '/content') {
-    const newWindow = new Window('new-page', {
-      title: '新页面',
-      width: 800,
-      height: 600,
+    const window = new Window('content')
+
+    const webview = new Webview(window, 'content', {
+      url: '/content',
+      x: 0,
+      y: 0,
+      width: 1000,
+      height: 1000,
     })
 
-    await newWindow.once('tauri://created', () => {
-      console.log('New window created')
+    webview.once('tauri://created', () => {
+      // webview successfully created
+    })
+    webview.once('tauri://error', (e) => {
+      console.log(e)
+      // an error happened creating the webview
     })
 
     next(false) // 阻止默认导航

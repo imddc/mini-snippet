@@ -12,7 +12,12 @@
   "app": {
     "windows": [
       {
-        "title": "node-verson-controller",
+        "label": "content",
+        "width": 800,
+        "height": 600
+      },
+      {
+        "label": "main",
         "width": 600,
         "height": 100,
         "decorations": false,
@@ -24,8 +29,7 @@
         "hiddenTitle": true,
         "maximizable": true,
         "minimizable": true,
-        "shadow": false,
-        "label": "main"
+        "shadow": false
       }
     ],
     "macOSPrivateApi": true ,

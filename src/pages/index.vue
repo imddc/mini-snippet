@@ -1,15 +1,13 @@
 <script setup lang="ts">
 import { SaveIcon } from 'lucide-vue-next'
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 const snippet = ref('')
-const savedSnippets = ref<string[]>([])
 
-function saveSnippet() {
-  if (snippet.value.trim()) {
-    savedSnippets.value.push(snippet.value.trim())
-    snippet.value = ''
-  }
+function goContent() {
+  router.push('/content')
 }
 </script>
 
@@ -24,22 +22,16 @@ function saveSnippet() {
           >
           <button
             class="absolute bottom-2 right-3 flex size-10 items-center justify-center rounded-full bg-blue-500 text-white transition duration-300 ease-in-out hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-700"
-            @click="saveSnippet"
           >
             <SaveIcon class="size-5" />
           </button>
         </div>
+      </div>
 
-        <div v-if="savedSnippets.length > 0" class="mt-8">
-          <h2 class="mb-4 text-2xl font-bold text-white">
-            Saved Snippets
-          </h2>
-          <ul class="space-y-4">
-            <li v-for="(savedSnippet, index) in savedSnippets" :key="index" class="rounded-lg bg-gray-800/50 p-4">
-              <pre class="overflow-x-auto text-white"><code>{{ savedSnippet }}</code></pre>
-            </li>
-          </ul>
-        </div>
+      <div class="flex justify-center">
+        <button type="button" @click="goContent">
+          go content
+        </button>
       </div>
     </div>
   </div>
