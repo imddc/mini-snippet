@@ -1,7 +1,7 @@
 import type { ShortcutEvent } from '@tauri-apps/plugin-global-shortcut'
+import { Events } from '@/constants/eventEnums'
+import { emitEvent } from '@/utils/eventHandler'
 import { register, unregister } from '@tauri-apps/plugin-global-shortcut'
-import { Events } from '~/constants/eventEnums'
-import { emitEvent } from '~/utils/eventHandler'
 
 const keyMaps: Record<string, Events> = {
   'alt+space': Events.TOGGLE_MAIN_WINDOW,

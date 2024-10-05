@@ -1,17 +1,80 @@
-@import url("./tailwind.css");
+@import './tailwind.css';
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-:root {
-  --header-bar-height: 30px;
-}
-
-* {
-  padding: 0;
-  margin: 0;
+ 
+@layer base {
+  :root {
+    --background: 210 20% 10%; /* 更新背景色 */
+    --foreground: 210 20% 90%; /* 更新前景色 */
+ 
+    --muted: 210 30% 20%; /* 更新静音色 */
+    --muted-foreground: 210 30% 80%; /* 更新静音前景色 */
+ 
+    --popover: 210 20% 15%; /* 更新弹出层背景色 */
+    --popover-foreground: 210 20% 90%; /* 更新弹出层前景色 */
+ 
+    --card: 210 20% 15%; /* 更新卡片背景色 */
+    --card-foreground: 210 20% 90%; /* 更新卡片前景色 */
+ 
+    --border: 210 30% 25%; /* 更新边框色 */
+    --input: 210 30% 25%; /* 更新输入框色 */
+ 
+    --primary: 210 20% 80%; /* 更新主色 */
+    --primary-foreground: 210 20% 10%; /* 更新主前景色 */
+ 
+    --secondary: 210 30% 30%; /* 更新次要色 */
+    --secondary-foreground: 210 20% 90%; /* 更新次要前景色 */
+ 
+    --accent: 210 30% 40%; /* 更新强调色 */
+    --accent-foreground: 210 20% 90%; /* 更新强调前景色 */
+ 
+    --destructive: 0 80% 50%; /* 更新破坏性色 */
+    --destructive-foreground: 210 20% 90%; /* 更新破坏性前景色 */
+ 
+    --ring: 210 20% 30%; /* 更新环色 */
+ 
+    --radius: 0.5rem;
+  }
+ 
+  .dark {
+    --background: 210 20% 10%; /* 更新深色背景色 */
+    --foreground: 210 20% 90%; /* 更新深色前景色 */
+ 
+    --muted: 210 30% 20%; /* 更新深色静音色 */
+    --muted-foreground: 210 30% 80%; /* 更新深色静音前景色 */
+ 
+    --popover: 210 20% 15%; /* 更新深色弹出层背景色 */
+    --popover-foreground: 210 20% 90%; /* 更新深色弹出层前景色 */
+ 
+    --card: 210 20% 15%; /* 更新深色卡片背景色 */
+    --card-foreground: 210 20% 90%; /* 更新深色卡片前景色 */
+ 
+    --border: 210 30% 25%; /* 更新深色边框色 */
+    --input: 210 30% 25%; /* 更新深色输入框色 */
+ 
+    --primary: 210 20% 90%; /* 更新深色主色 */
+    --primary-foreground: 210 20% 10%; /* 更新深色主前景色 */
+ 
+    --secondary: 210 30% 30%; /* 更新深色次要色 */
+    --secondary-foreground: 210 20% 90%; /* 更新深色次要前景色 */
+ 
+    --accent: 210 30% 40%; /* 更新深色强调色 */
+    --accent-foreground: 210 20% 90%; /* 更新深色强调前景色 */
+ 
+    --destructive: 0 80% 50%; /* 更新深色破坏性色 */
+    --destructive-foreground: 210 20% 90%; /* 更新深色破坏性前景色 */
+ 
+    --ring: 210 20% 30%; /* 更新深色环色 */
+  }
 }
  
-#app {
-  @apply rounded-lg;
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply text-foreground;
+  }
 }

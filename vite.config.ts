@@ -1,5 +1,7 @@
 import { resolve } from 'node:path'
 import vue from '@vitejs/plugin-vue'
+import autoprefixer from 'autoprefixer'
+import tailwind from 'tailwindcss'
 import VueRouter from 'unplugin-vue-router/vite'
 import { defineConfig } from 'vite'
 
@@ -16,10 +18,14 @@ export default defineConfig(async () => ({
   ],
   resolve: {
     alias: {
-      '~': resolve(__dirname, 'src'),
+      '@': resolve(__dirname, './src'),
     },
   },
-
+  css: {
+    postcss: {
+      plugins: [tailwind(), autoprefixer()],
+    },
+  },
   // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
   //
   // 1. prevent vite from obscuring rust errors

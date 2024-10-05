@@ -1,16 +1,14 @@
+import { Events } from '@/constants/eventEnums'
+import { WindowLabel } from '@/constants/windowEnums'
+import { useMainWindowStoreWithOut } from '@/store/mainWindowStore'
+import { emitEvent, useEvent } from '@/utils/eventHandler'
+import { getWindow } from '@/utils/window'
 import { WebviewWindow } from '@tauri-apps/api/webviewWindow'
-import { Events } from '~/constants/eventEnums'
-import { WindowLabel } from '~/constants/windowEnums'
-import { useMainWindowStoreWithOut } from '~/store/mainWindowStore'
-import { emitEvent, useEvent } from '~/utils/eventHandler'
-import { getWindow } from '~/utils/window'
 
 const mainWindowStore = useMainWindowStoreWithOut()
 
 export function registerEvents() {
   useEvent(Events.OPEN_CONTENT_WINDOW, async () => {
-    const mainWindow = await getWindow(WindowLabel.MAIN)
-
     const webviewWindow = new WebviewWindow(WindowLabel.CONTENT, {
       url: 'content',
       x: 0,
@@ -20,7 +18,7 @@ export function registerEvents() {
     })
 
     webviewWindow.once('tauri://created', () => {
-      mainWindow?.hide()
+      emitEvent(Events.CLOSE_MAIN_WINDOW)
     })
   })
 

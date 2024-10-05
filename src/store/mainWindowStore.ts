@@ -1,5 +1,5 @@
+import { store } from '@/plugins/pinia'
 import { defineStore } from 'pinia'
-import { store } from '~/plugins/pinia'
 
 const mainWindowStore = defineStore('mainWindow', {
   state: () => ({
