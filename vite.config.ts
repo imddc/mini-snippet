@@ -1,5 +1,6 @@
 import { resolve } from 'node:path'
 import vue from '@vitejs/plugin-vue'
+import VueRouter from 'unplugin-vue-router/vite'
 import { defineConfig } from 'vite'
 
 // eslint-disable-next-line node/prefer-global/process
@@ -7,7 +8,12 @@ const host = process.env.TAURI_DEV_HOST
 
 // https://vitejs.dev/config/
 export default defineConfig(async () => ({
-  plugins: [vue()],
+  plugins: [
+    VueRouter({
+      dts: 'src/typed-router.d.ts',
+    }),
+    vue(),
+  ],
   resolve: {
     alias: {
       '~': resolve(__dirname, 'src'),
