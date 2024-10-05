@@ -1,7 +1,6 @@
 import type { Snippet } from '@/types/snippet'
 import { snippets } from '@/constants/mockData'
 import { store } from '@/plugins/pinia'
-import { categories } from '@vueuse/core/metadata.cjs'
 import { defineStore } from 'pinia'
 
 interface SnippetStore {
@@ -31,7 +30,6 @@ const snippetsStore = defineStore('snippets', {
       })
       return result
     },
-    // 通过正则匹配子分类
     matchSubcategories(subcategory: string) {
       const regex = new RegExp(subcategory)
       return this.getAllSubcategories().filter(sub => regex.test(sub))

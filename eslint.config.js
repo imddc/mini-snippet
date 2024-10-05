@@ -13,6 +13,11 @@ export default antfu(
     ],
   },
   {
+    rules: {
+      'vue/no-unused-refs': 'off',
+    },
+  },
+  {
     ...oxlint.configs['flat/recommended'],
   },
   [

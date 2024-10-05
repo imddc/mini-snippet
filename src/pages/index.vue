@@ -18,38 +18,48 @@ function goContent() {
 }
 
 watchEffect(() => {
-  if (subCategory.value) {
-    foundSubcategories.value = snippetsStore.matchSubcategories(subCategory.value)
-  }
-  else {
-    foundSubcategories.value = []
+  foundSubcategories.value = subCategory.value ? snippetsStore.matchSubcategories(subCategory.value) : []
+
+  if (foundSubcategories.value.length) {
+    chooseSubCategory.value = foundSubcategories.value[0]
   }
 })
 </script>
 
 <template>
-  <div data-tauri-drag-region class="flex-col-center min-h-screen cursor-pointer space-y-2 rounded-lg p-2">
+  <div data-tauri-drag-region class="flex min-h-screen cursor-pointer flex-col items-center space-y-2 rounded-lg bg-gray-800/95 p-2 shadow-2xl backdrop-blur-lg">
     <!-- 主体 -->
-    <div class="w-full max-w-2xl overflow-hidden rounded-xl bg-gray-800 shadow-xl backdrop-blur-lg">
+    <div class="w-full max-w-2xl ">
       <div class="flex-between gap-2 p-3">
-        <div class="flex-1">
+        <div class="flex-1 rounded-lg bg-pink-200 p-1">
           <Input
             v-model.trim="subCategory"
-            placeholder="Enter your code snippet here..."
-            class="!focus-visible:ring-0 h-12 border-0 ring-0 ring-gray-600 focus-visible:ring-0 focus-visible:ring-offset-0"
+            placeholder="输入代码片段"
+            class="h-14 text-lg ring-gray-600 focus-visible:ring-0 focus-visible:ring-offset-0"
           />
 
-          <div>
-            <ul>
-              <li v-for="sub in foundSubcategories" :key="sub" @click="chooseSubCategory = sub">
-                {{ sub }}
-              </li>
-            </ul>
-          </div>
+          <template v-if="foundSubcategories.length">
+            <div class="w-full rounded-lg backdrop-blur-lg">
+              <ul
+                ref="foundSubcategoriesListRef"
+                class="space-y-1 p-2 text-lg"
+              >
+                <li
+                  v-for="sub in foundSubcategories"
+                  :key="sub"
+                  :class="{ 'bg-gray-600': chooseSubCategory === sub }"
+                  class="cursor-pointer rounded-md p-1 hover:bg-gray-600"
+                  @click="chooseSubCategory = sub"
+                >
+                  {{ sub }}
+                </li>
+              </ul>
+            </div>
+          </template>
         </div>
 
         <button
-          class="flex size-10 items-center justify-center rounded-full bg-gray-500 text-white transition duration-300 ease-in-out hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-700"
+          class="flex size-10 items-center justify-center self-start rounded-full bg-gray-500 text-white transition duration-300 ease-in-out hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-700"
           @click="goContent"
         >
           <EggIcon class="size-5" />
