@@ -1,12 +1,14 @@
 import { WebviewWindow } from '@tauri-apps/api/webviewWindow'
-import { getAllWindows, getCurrentWindow } from '@tauri-apps/api/window'
 import { Events } from '~/constants/eventEnums'
 import { WindowLabel } from '~/constants/windowEnums'
 import { useEvent } from '~/utils/eventHandler'
+import { getWindow } from '~/utils/window'
+
+let isMainWindowShow = true
 
 export function registerEvents() {
-  useEvent(Events.OPEN_CONTENT_WINDOW, () => {
-    const currentWindow = getCurrentWindow()
+  useEvent(Events.OPEN_CONTENT_WINDOW, async () => {
+    const mainWindow = await getWindow(WindowLabel.MAIN)
 
     const webviewWindow = new WebviewWindow(WindowLabel.CONTENT, {
       url: 'content',
@@ -17,27 +19,26 @@ export function registerEvents() {
     })
 
     webviewWindow.once('tauri://created', () => {
-      currentWindow.hide()
+      mainWindow?.hide()
     })
   })
 
   useEvent(Events.OPEN_MAIN_WINDOW, async () => {
-    const allWindows = await getAllWindows()
-    const mainWindow = allWindows.find(window => window.label === WindowLabel.MAIN)
+    const mainWindow = await getWindow(WindowLabel.MAIN)
+    mainWindow && mainWindow.show()
+  })
 
+  useEvent(Events.CLOSE_MAIN_WINDOW, async () => {
+    const mainWindow = await getWindow(WindowLabel.MAIN)
+    mainWindow && mainWindow.close()
+  })
+
+  useEvent(Events.TOGGLE_MAIN_WINDOW, async () => {
+    const mainWindow = await getWindow(WindowLabel.MAIN)
     if (!mainWindow) {
       return
     }
-
-    const isClosable = await mainWindow.isClosable()
-
-    if (isClosable) {
-      mainWindow.show()
-      mainWindow.setFocus()
-    }
-    else {
-      mainWindow.setClosable(true)
-      mainWindow.show()
-    }
+    isMainWindowShow ? mainWindow.hide() : mainWindow.show()
+    isMainWindowShow = !isMainWindowShow
   })
 }
