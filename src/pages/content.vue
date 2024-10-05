@@ -1,115 +1,106 @@
-<script setup>
-import { ref } from 'vue'
+<script setup lang="ts">
+import { snippets } from '@/constants/mockData'
+import { computed, ref } from 'vue'
 
-const categories = ref([
-  {
-    id: 1,
-    name: 'JavaScript',
-    isOpen: true,
-    snippets: [
-      { id: 1, name: '数组去重', code: 'const unique = (arr) => [...new Set(arr)];' },
-      { id: 2, name: '深拷贝', code: 'const deepClone = (obj) => JSON.parse(JSON.stringify(obj));' },
-    ],
-  },
-  {
-    id: 2,
-    name: 'Vue',
-    isOpen: false,
-    snippets: [
-      { id: 3, name: '计算属性', code: 'const computed = computed(() => { /* 计算逻辑 */ });' },
-      { id: 4, name: '监听器', code: 'watch(source, (newValue, oldValue) => { /* 监听逻辑 */ });' },
-    ],
-  },
-  {
-    id: 3,
-    name: 'CSS',
-    isOpen: false,
-    snippets: [
-      { id: 5, name: 'Flexbox居中', code: '.center { display: flex; justify-content: center; align-items: center; }' },
-      { id: 6, name: '响应式布局', code: '@media (max-width: 768px) { /* 响应式样式 */ }' },
-    ],
-  },
-])
+const categories = ref(Object.keys(snippets))
+const selectedCategory = ref(categories.value[0])
+const subcategories = computed(() => Object.keys(snippets[selectedCategory.value] || {}))
+const selectedSubcategory = ref('')
+const selectedSnippet = computed(() => {
+  if (selectedCategory.value && selectedSubcategory.value) {
+    return snippets[selectedCategory.value][selectedSubcategory.value] || 'Select a snippet'
+  }
+  return 'Select a category and subcategory'
+})
 
-const selectedSnippet = ref(null)
-
-function selectSnippet(snippet) {
-  selectedSnippet.value = snippet
+function selectCategory(category: string) {
+  selectedCategory.value = category
+  selectedSubcategory.value = ''
 }
 
-function editSnippet() {
-}
-
-function deleteSnippet() {
-  selectedSnippet.value = null
+function selectSubcategory(subcategory: string) {
+  selectedSubcategory.value = subcategory
 }
 </script>
 
 <template>
-  <div class="flex h-screen bg-gray-100">
-    <!-- 左侧导航菜单 -->
-    <nav class="w-64 bg-gray-800 text-white">
-      <div class="p-4">
-        <h1 class="text-2xl font-semibold">
-          代码片段管理
-        </h1>
-      </div>
-      <ul class="mt-4">
-        <li v-for="category in categories" :key="category.id" class="mb-2">
-          <div
-            class="flex cursor-pointer items-center justify-between px-4 py-2 hover:bg-gray-700"
-            @click="category.isOpen = !category.isOpen"
-          >
-            <span>{{ category.name }}</span>
-            <svg
-              class="size-4 transition-transform" :class="{ 'rotate-180': category.isOpen }" fill="none"
-              stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
-            >
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-            </svg>
-          </div>
-          <ul v-if="category.isOpen" class="ml-4">
-            <li
-              v-for="snippet in category.snippets" :key="snippet.id"
-              class="cursor-pointer px-4 py-2 hover:bg-gray-700" @click="selectSnippet(snippet)"
-            >
-              {{ snippet.name }}
-            </li>
-          </ul>
-        </li>
-      </ul>
-    </nav>
+  <div class="min-h-screen rounded-lg bg-gradient-to-br from-purple-700 to-blue-500">
+    <!-- 控制按钮区域 -->
+    <div data-tauri-drag-region class="flex-between h-[var(--header-height)] cursor-pointer p-4">
+      <button class="rounded bg-blue-600 px-4 py-2 text-white transition duration-300 hover:bg-blue-700">
+        Add New Snippet
+      </button>
+    </div>
 
-    <!-- 右侧内容区域 -->
-    <main class="flex-1 p-8">
-      <div v-if="selectedSnippet" class="rounded-lg bg-white p-6 shadow-md">
-        <h2 class="mb-4 text-2xl font-semibold">
-          {{ selectedSnippet.name }}
-        </h2>
-        <div class="rounded-md bg-gray-100 p-4">
-          <pre><code>{{ selectedSnippet.code }}</code></pre>
+    <!-- 内容区域 -->
+    <div class="p-4">
+      <div class="flex h-[calc(100vh-2rem-var(--header-height))] gap-2">
+        <!-- 左侧导航菜单 -->
+        <div class="flex w-64 shrink-0 gap-2 text-white">
+          <!-- 大分类 -->
+          <div class="category-wrap overflow-y-auto">
+            <ul class="space-y-2">
+              <li
+                v-for="category in categories"
+                :key="category"
+                :class="{ 'bg-gray-800': selectedCategory === category }"
+                :title="category"
+                class="cursor-pointer truncate rounded p-2 hover:bg-gray-800"
+                @click="selectCategory(category)"
+              >
+                {{ category }}
+              </li>
+            </ul>
+          </div>
+
+          <!-- 细分类别 -->
+          <div class="category-wrap overflow-y-auto">
+            <ul class="flex-1">
+              <li
+                v-for="subcategory in subcategories"
+                :key="subcategory"
+                :class="{ 'bg-gray-800': selectedSubcategory === subcategory }"
+                :title="subcategory"
+                class="cursor-pointer truncate rounded p-2 hover:bg-gray-800"
+                @click="selectSubcategory(subcategory)"
+              >
+                {{ subcategory }}
+              </li>
+            </ul>
+          </div>
         </div>
-        <div class="mt-4 flex justify-end">
-          <button
-            class="mr-2 rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-600"
-            @click="editSnippet"
-          >
-            编辑
-          </button>
-          <button class="rounded bg-red-500 px-4 py-2 font-bold text-white hover:bg-red-600" @click="deleteSnippet">
-            删除
-          </button>
+
+        <!-- 代码区域 -->
+        <div class="h-full min-w-0 flex-1 shrink-0 overflow-x-auto rounded-lg bg-gray-900/90 p-4 shadow-md">
+          <pre class="text-white">
+            <code class="min-w-0 text-ellipsis text-sm">
+              {{ selectedSnippet }}
+            </code>
+          </pre>
         </div>
       </div>
-      <div v-else class="flex h-full items-center justify-center">
-        <p class="text-xl text-gray-500">
-          请选择一个代码片段
-        </p>
-      </div>
-    </main>
+    </div>
   </div>
 </template>
 
 <style>
-@import 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css';
+:root {
+  --header-height: 80px;
+}
+
+.animate-gradient-x {
+  background-size: 400% 400%;
+  animation: gradient-x 5s ease infinite;
+}
+
+@keyframes gradient-x {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+}
 </style>

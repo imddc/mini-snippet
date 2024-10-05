@@ -6,6 +6,10 @@
  
 @layer base {
   :root {
+    /* 数值 */
+    --content-header-height: 60px;
+
+    /* 颜色 */
     --background: 210 20% 10%; /* 更新背景色 */
     --foreground: 210 20% 90%; /* 更新前景色 */
  
@@ -77,4 +81,16 @@
   body {
     @apply text-foreground;
   }
+}
+
+::-webkit-scrollbar {
+  @apply w-1;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply rounded-full bg-gray-600;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-gray-800;
 }

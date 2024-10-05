@@ -9,3 +9,7 @@
 .flex-between {
   @apply flex items-center justify-between;
 }
+
+.category-wrap {
+  @apply rounded-lg bg-gray-700/90 flex-1 p-2 shadow-md;
+}

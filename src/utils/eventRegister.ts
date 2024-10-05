@@ -15,6 +15,13 @@ export function registerEvents() {
       y: 0,
       width: 800,
       height: 600,
+      closable: true,
+      decorations: false,
+      transparent: true,
+      resizable: false,
+      alwaysOnTop: true,
+      center: true,
+      shadow: false,
     })
 
     webviewWindow.once('tauri://created', () => {
