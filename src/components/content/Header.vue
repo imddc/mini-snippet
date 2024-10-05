@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Events } from '@/constants/eventEnums';
+import { Events } from '@/constants/eventEnums'
 import { emitEvent } from '@/utils/eventHandler'
 import { X } from 'lucide-vue-next'
 
@@ -22,7 +22,3 @@ function closeContent() {
     </div>
   </div>
 </template>
-
-<style scoped>
-
-</style>

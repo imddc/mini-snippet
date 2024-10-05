@@ -1,4 +1,5 @@
 import { setupStore } from '@/plugins/pinia'
+import { setupSnippetsStore } from '@/store/snippetsStore'
 import { registerEvents } from '@/utils/eventRegister'
 import { initKeyMaps } from '@/utils/keyMaps'
 import { createApp } from 'vue'
@@ -13,3 +14,6 @@ app.mount('#app')
 
 registerEvents()
 initKeyMaps()
+
+// 初始化 snippetsStore
+setupSnippetsStore()

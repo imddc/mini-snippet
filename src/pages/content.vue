@@ -1,18 +1,22 @@
 <script setup lang="ts">
 import CodeShow from '@/components/content/CodeShow.vue'
 import Header from '@/components/content/Header.vue'
-import { snippets } from '@/constants/mockData'
+import { useSnippetsStoreWithOut } from '@/store/snippetsStore'
+import { storeToRefs } from 'pinia'
 import { computed, ref } from 'vue'
 
-const categories = ref(Object.keys(snippets))
+const snippetsStore = useSnippetsStoreWithOut()
+const { snippets } = storeToRefs(snippetsStore)
+
+const categories = ref(Object.keys(snippets.value))
 const selectedCategory = ref(categories.value[0])
 
-const subcategories = computed(() => Object.keys(snippets[selectedCategory.value] || {}))
+const subcategories = computed(() => Object.keys(snippets.value[selectedCategory.value] || {}))
 const selectedSubcategory = ref('')
 
 const selectedSnippet = computed(() => {
   if (selectedCategory.value && selectedSubcategory.value) {
-    return snippets[selectedCategory.value][selectedSubcategory.value]
+    return snippets.value[selectedCategory.value][selectedSubcategory.value]
   }
   return ''
 })
