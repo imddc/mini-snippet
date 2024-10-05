@@ -1,5 +1,5 @@
 .content-animate-gradient {
-  @apply bg-gradient-to-br from-blue-400 to-pink-400;
+  @apply bg-gradient-to-br from-purple-700 to-blue-500;
   background-size: 200% 200%;
   animation: gradient-x 15s ease infinite;
 }

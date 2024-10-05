@@ -8,7 +8,7 @@
 @layer base {
   :root {
     /* 数值 */
-    --content-header-height: 60px;
+    --content-header-height: 50px;
 
     /* 颜色 */
     --background: 210 20% 10%; /* 更新背景色 */

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import CodeShow from '@/components/content/CodeShow.vue'
+import Header from '@/components/content/Header.vue'
 import { snippets } from '@/constants/mockData'
 import { computed, ref } from 'vue'
 
@@ -29,11 +30,7 @@ function selectSubcategory(subcategory: string) {
 <template>
   <div class="content-animate-gradient min-h-screen rounded-lg">
     <!-- 控制按钮区域 -->
-    <div data-tauri-drag-region class="flex-between h-[var(--content-header-height)] cursor-pointer p-4">
-      <button class="rounded bg-blue-600 px-4 py-2 text-white transition duration-300 hover:bg-blue-700">
-        Add New Snippet
-      </button>
-    </div>
+    <Header />
 
     <!-- 内容区域 -->
     <div class="p-4">
