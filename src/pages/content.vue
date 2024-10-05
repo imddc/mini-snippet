@@ -1,16 +1,19 @@
 <script setup lang="ts">
+import CodeShow from '@/components/content/CodeShow.vue'
 import { snippets } from '@/constants/mockData'
 import { computed, ref } from 'vue'
 
 const categories = ref(Object.keys(snippets))
 const selectedCategory = ref(categories.value[0])
+
 const subcategories = computed(() => Object.keys(snippets[selectedCategory.value] || {}))
 const selectedSubcategory = ref('')
+
 const selectedSnippet = computed(() => {
   if (selectedCategory.value && selectedSubcategory.value) {
-    return snippets[selectedCategory.value][selectedSubcategory.value] || 'Select a snippet'
+    return snippets[selectedCategory.value][selectedSubcategory.value]
   }
-  return 'Select a category and subcategory'
+  return ''
 })
 
 function selectCategory(category: string) {
@@ -55,7 +58,7 @@ function selectSubcategory(subcategory: string) {
 
           <!-- 细分类别 -->
           <div class="category-wrap overflow-y-auto">
-            <ul class="flex-1">
+            <ul class="space-y-2">
               <li
                 v-for="subcategory in subcategories"
                 :key="subcategory"
@@ -71,12 +74,8 @@ function selectSubcategory(subcategory: string) {
         </div>
 
         <!-- 代码区域 -->
-        <div class="h-full min-w-0 flex-1 shrink-0 overflow-x-auto rounded-lg bg-gray-900/90 p-4 shadow-md">
-          <pre class="text-white">
-            <code class="min-w-0 text-ellipsis text-sm">
-              {{ selectedSnippet }}
-            </code>
-          </pre>
+        <div class="flex-1 overflow-hidden">
+          <CodeShow :selected-snippet="selectedSnippet" />
         </div>
       </div>
     </div>

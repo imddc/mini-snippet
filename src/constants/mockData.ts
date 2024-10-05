@@ -1,5 +1,7 @@
+import type { Snippet } from '@/types/snippet'
+
 // 模拟数据
-export const snippets = {
+export const snippets: Snippet = {
   js: {
     debounce: `function debounce(func, wait) {
   let timeout;
@@ -8,7 +10,9 @@ export const snippets = {
       clearTimeout(timeout);
       func(...args);
     };
-    clearTimeout(timeout);
+      clearTimeout(timeout);
+      func(...args);
+    };
     timeout = setTimeout(later, wait);
   };
 };`,
