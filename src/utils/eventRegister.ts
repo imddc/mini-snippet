@@ -24,6 +24,7 @@ export function registerEvents() {
   useEvent(Events.OPEN_MAIN_WINDOW, async () => {
     const allWindows = await getAllWindows()
     const mainWindow = allWindows.find(window => window.label === WindowLabel.MAIN)
+
     if (!mainWindow) {
       return
     }

@@ -1,4 +1,5 @@
-import hotkey from 'hotkeys-js'
+import type { ShortcutEvent } from '@tauri-apps/plugin-global-shortcut'
+import { register, unregister } from '@tauri-apps/plugin-global-shortcut'
 import { Events } from '~/constants/eventEnums'
 import { emitEvent } from '~/utils/eventHandler'
 
@@ -6,17 +7,26 @@ const keyMaps: Record<string, Events> = {
   'alt+space': Events.OPEN_MAIN_WINDOW,
 }
 
-function handleKeyDown() {
-  for (const key in keyMaps) {
-    hotkey(key, () => {
-      emitEvent(keyMaps[key])
-    })
+// 便于处理开发环境下注册快捷键
+async function registerShortcuts(shortcuts: string | string[], callback: (e: ShortcutEvent) => void) {
+  if (typeof shortcuts === 'string') {
+    shortcuts = [shortcuts]
+  }
+  for (const shortcut of shortcuts) {
+    await unregister(shortcut)
+    await register(shortcut, callback)
   }
 }
 
-export function initKeyMaps() {
+export async function initKeyMaps() {
   if (typeof window === 'undefined') {
     return
   }
-  handleKeyDown()
+
+  // 注册快捷键
+  for (const key in keyMaps) {
+    registerShortcuts(key, () => {
+      emitEvent(keyMaps[key])
+    })
+  }
 }
