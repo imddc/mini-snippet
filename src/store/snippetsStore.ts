@@ -18,10 +18,10 @@ const snippetsStore = defineStore('snippets', {
     getCategories() {
       return Object.keys(this.snippets)
     },
-    getSubcategories(category: string) {
+    getSnippetsTitles(category: string) {
       return Object.keys(this.snippets[category] || {})
     },
-    getAllSubcategories() {
+    getAllSnippetsTitles() {
       const result: string[] = []
       Object.keys(this.snippets).forEach((category) => {
         Object.keys(this.snippets[category]).forEach((subcategory) => {
@@ -30,12 +30,12 @@ const snippetsStore = defineStore('snippets', {
       })
       return result
     },
-    matchSubcategories(subcategory: string) {
+    matchSnippetsTitles(subcategory: string) {
       const regex = new RegExp(subcategory)
-      return this.getAllSubcategories().filter(sub => regex.test(sub))
+      return this.getAllSnippetsTitles().filter(sub => regex.test(sub))
     },
-    getSnippets(subcategory: string) {
-      return Object.values(this.snippets).flatMap(category => category[subcategory] || [])
+    getSnippetsByTitle(title: string) {
+      return Object.values(this.snippets).flatMap(category => category[title] || [])
     },
   },
 })

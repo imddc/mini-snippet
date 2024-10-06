@@ -8,20 +8,20 @@ import { ref, watchEffect } from 'vue'
 
 const snippetsStore = useSnippetsStoreWithOut()
 
-const subCategory = ref('')
+const snippetsTitle = ref('')
 
-const chooseSubCategory = ref('')
-const foundSubcategories = ref<string[]>([])
+const chooseSnippetsTitle = ref('')
+const foundSnippetsTitles = ref<string[]>([])
 
 function goContent() {
   emitEvent(Events.OPEN_CONTENT_WINDOW)
 }
 
 watchEffect(() => {
-  foundSubcategories.value = subCategory.value ? snippetsStore.matchSubcategories(subCategory.value) : []
+  foundSnippetsTitles.value = snippetsTitle.value ? snippetsStore.matchSnippetsTitles(snippetsTitle.value) : []
 
-  if (foundSubcategories.value.length) {
-    chooseSubCategory.value = foundSubcategories.value[0]
+  if (foundSnippetsTitles.value.length) {
+    chooseSnippetsTitle.value = foundSnippetsTitles.value[0]
   }
 })
 </script>
@@ -33,25 +33,25 @@ watchEffect(() => {
       <div class="flex-between gap-2 p-3">
         <div class="flex-1 rounded-lg bg-pink-200 p-1">
           <Input
-            v-model.trim="subCategory"
+            v-model.trim="snippetsTitle"
             placeholder="input code ..."
             class="h-12 text-lg ring-gray-600 focus-visible:ring-0 focus-visible:ring-offset-0"
           />
 
-          <template v-if="foundSubcategories.length">
+          <template v-if="foundSnippetsTitles.length">
             <div class="w-full overflow-hidden rounded-lg backdrop-blur-lg">
               <ul
                 class="space-y-1 p-2 text-lg"
               >
                 <li
-                  v-for="sub in foundSubcategories"
-                  :key="sub"
-                  :class="{ 'bg-gray-600': chooseSubCategory === sub }"
+                  v-for="title in foundSnippetsTitles"
+                  :key="title"
+                  :class="{ 'bg-gray-600': chooseSnippetsTitle === title }"
                   class="cursor-pointer truncate rounded-md p-1 hover:bg-gray-600"
-                  @click="chooseSubCategory = sub"
+                  @click="chooseSnippetsTitle = title"
                 >
                   <code class="text-sm">
-                    {{ sub }} - {{ snippetsStore.getSnippets(chooseSubCategory) }}
+                    {{ title }} - {{ snippetsStore.getSnippetsByTitle(title) }}
                   </code>
                 </li>
               </ul>

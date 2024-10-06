@@ -12,23 +12,23 @@ const { snippets } = storeToRefs(snippetsStore)
 const categories = ref(Object.keys(snippets.value))
 const selectedCategory = ref(categories.value[0])
 
-const subcategories = computed(() => Object.keys(snippets.value[selectedCategory.value] || {}))
-const selectedSubcategory = ref('')
+const snippetsTitles = computed(() => Object.keys(snippets.value[selectedCategory.value] || {}))
+const selectedSnippetsTitle = ref('')
 
 const selectedSnippet = computed(() => {
-  if (selectedCategory.value && selectedSubcategory.value) {
-    return snippets.value[selectedCategory.value][selectedSubcategory.value]
+  if (selectedCategory.value && selectedSnippetsTitle.value) {
+    return snippets.value[selectedCategory.value][selectedSnippetsTitle.value]
   }
   return ''
 })
 
 function selectCategory(category: string) {
   selectedCategory.value = category
-  selectedSubcategory.value = ''
+  selectedSnippetsTitle.value = ''
 }
 
-function selectSubcategory(subcategory: string) {
-  selectedSubcategory.value = subcategory
+function selectSnippetsTitle(title: string) {
+  selectedSnippetsTitle.value = title
 }
 </script>
 
@@ -65,14 +65,14 @@ function selectSubcategory(subcategory: string) {
 
           <ScrollArea class="h-[calc(100%-2rem)] p-2 pb-1">
             <div
-              v-for="subcategory in subcategories"
-              :key="subcategory"
-              :class="{ 'bg-gray-800': selectedSubcategory === subcategory }"
-              :title="subcategory"
+              v-for="title in snippetsTitles"
+              :key="title"
+              :class="{ 'bg-gray-800': selectedSnippetsTitle === title }"
+              :title="title"
               class="mb-1 cursor-pointer truncate rounded p-1 px-2 transition hover:bg-gray-800"
-              @click="selectSubcategory(subcategory)"
+              @click="selectSnippetsTitle(title)"
             >
-              {{ subcategory }}
+              {{ title }}
             </div>
           </ScrollArea>
         </div>
