@@ -4,7 +4,7 @@ import Search from '@/components/content/Search.vue'
 import SnippetsEditor from '@/components/content/SnippetsEditor.vue'
 import ScrollArea from '@/components/ui/scroll-area/ScrollArea.vue'
 import { useSnippetsStoreWithOut } from '@/store/snippetsStore'
-import { Egg, Pencil, Trash } from 'lucide-vue-next'
+import { Egg, FolderPlus, Pencil, Trash } from 'lucide-vue-next'
 import { storeToRefs } from 'pinia'
 import { computed, ref } from 'vue'
 import { toast } from 'vue-sonner'
@@ -75,6 +75,10 @@ function handleDeleteSnippets(category: string, title: string) {
     toast('delete success')
   }
 }
+
+function handleAddCategory() {
+  console.log('add category')
+}
 </script>
 
 <template>
@@ -84,7 +88,16 @@ function handleDeleteSnippets(category: string, title: string) {
       <div class="flex w-64 shrink-0 gap-2 text-sm text-white">
         <!-- 大分类 -->
         <div class="category-wrap w-2/5">
-          <ScrollArea class="size-full p-2">
+          <div
+            class="flex-center h-8 w-full cursor-pointer gap-2 border-b border-gray-500 bg-gray-700/90"
+            @click="handleAddCategory"
+          >
+            <div class="flex-center size-5 text-gray-400" title="add category">
+              <FolderPlus class="size-full" />
+            </div>
+          </div>
+
+          <ScrollArea class="size-full h-[calc(100%-2rem)] p-2">
             <div
               v-for="category in categories"
               :key="category"

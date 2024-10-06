@@ -13,7 +13,9 @@ const searchValue = ref('')
 <template>
   <div class="relative h-8 border-b text-sm">
     <input
-      v-model.trim="searchValue" placeholder="search..." class="size-full bg-gray-600/90 py-2 pl-4 pr-7"
+      v-model.trim="searchValue"
+      placeholder="search..."
+      class="size-full bg-gray-600/90 py-2 pl-4 pr-7"
       @input="() => $emit('search', searchValue)"
     >
     <CirclePlus
