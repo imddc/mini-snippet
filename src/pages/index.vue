@@ -35,7 +35,7 @@ watchEffect(() => {
           <Input
             v-model.trim="snippetsTitle"
             placeholder="input code ..."
-            class="h-12 text-lg ring-gray-600 focus-visible:ring-0 focus-visible:ring-offset-0"
+            class="h-12 text-lg"
           />
 
           <template v-if="foundSnippetsTitles.length">

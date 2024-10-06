@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import CodeShow from '@/components/content/CodeShow.vue'
 import Search from '@/components/content/Search.vue'
+import SnippetsEditor from '@/components/content/SnippetsEditor.vue'
 import ScrollArea from '@/components/ui/scroll-area/ScrollArea.vue'
 import { useSnippetsStoreWithOut } from '@/store/snippetsStore'
 import { Egg } from 'lucide-vue-next'
@@ -40,6 +41,11 @@ function handleSearch(searchValue: string) {
     selectedCategory.value,
   )
 }
+
+const isAddingSnippets = ref(false)
+function handleAddSnippets() {
+  isAddingSnippets.value = true
+}
 </script>
 
 <template>
@@ -65,7 +71,7 @@ function handleSearch(searchValue: string) {
 
         <!-- 细分类别 -->
         <div class="category-wrap w-3/5">
-          <Search @search="handleSearch" />
+          <Search @search="handleSearch" @add-snippets="handleAddSnippets" />
 
           <ScrollArea class="h-[calc(100%-2rem)] p-2 pb-1">
             <template v-if="snippetsTitles.length === 0">
@@ -94,7 +100,13 @@ function handleSearch(searchValue: string) {
 
       <!-- 代码区域 -->
       <div class="h-full flex-1 overflow-hidden">
-        <CodeShow :selected-snippet="selectedSnippet" />
+        <template v-if="isAddingSnippets">
+          <SnippetsEditor />
+        </template>
+
+        <template v-else>
+          <CodeShow :selected-snippet="selectedSnippet" />
+        </template>
       </div>
     </div>
   </div>
