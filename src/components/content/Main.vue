@@ -3,7 +3,7 @@ import CodeShow from '@/components/content/CodeShow.vue'
 import Search from '@/components/content/Search.vue'
 import ScrollArea from '@/components/ui/scroll-area/ScrollArea.vue'
 import { useSnippetsStoreWithOut } from '@/store/snippetsStore'
-import { useDebounceFn } from '@vueuse/core'
+import { Egg } from 'lucide-vue-next'
 import { storeToRefs } from 'pinia'
 import { computed, ref } from 'vue'
 
@@ -68,16 +68,26 @@ function handleSearch(searchValue: string) {
           <Search @search="handleSearch" />
 
           <ScrollArea class="h-[calc(100%-2rem)] p-2 pb-1">
-            <div
-              v-for="title in snippetsTitles"
-              :key="title"
-              :class="{ 'bg-gray-800': selectedSnippetsTitle === title }"
-              :title="title"
-              class="mb-1 cursor-pointer truncate rounded p-1 px-2 transition hover:bg-gray-800"
-              @click="selectSnippetsTitle(title)"
-            >
-              {{ title }}
-            </div>
+            <template v-if="snippetsTitles.length === 0">
+              <div class="flex-col-center mt-12 gap-2 text-gray-500">
+                <Egg class="size-10" />
+                <p class="text-center">
+                  not found
+                </p>
+              </div>
+            </template>
+            <template v-else>
+              <div
+                v-for="title in snippetsTitles"
+                :key="title"
+                :class="{ 'bg-gray-800': selectedSnippetsTitle === title }"
+                :title="title"
+                class="mb-1 cursor-pointer truncate rounded p-1 px-2 transition hover:bg-gray-800"
+                @click="selectSnippetsTitle(title)"
+              >
+                {{ title }}
+              </div>
+            </template>
           </ScrollArea>
         </div>
       </div>
