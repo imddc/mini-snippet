@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea'
 import { useSnippetsStoreWithOut } from '@/store/snippetsStore'
 import { storeToRefs } from 'pinia'
-import { ref } from 'vue'
+import { onUpdated, ref } from 'vue'
 
 const props = withDefaults(defineProps<{
   editingSnippet?: SnippetEditor
@@ -27,7 +27,6 @@ const snippet = ref(props.editingSnippet || {
 })
 
 const categories = snippetsStore.getCategories()
-
 function saveSnippet() {
   if (snippet.value.category && snippet.value.title && snippet.value.content) {
     if (isCreatingSnippet.value) {
@@ -47,6 +46,12 @@ function saveSnippet() {
 function cancelEdit() {
   emit('close')
 }
+
+onUpdated(() => {
+  if (props.editingSnippet) {
+    snippet.value = props.editingSnippet
+  }
+})
 </script>
 
 <template>

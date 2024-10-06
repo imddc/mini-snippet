@@ -4,18 +4,23 @@ import Search from '@/components/content/Search.vue'
 import SnippetsEditor from '@/components/content/SnippetsEditor.vue'
 import ScrollArea from '@/components/ui/scroll-area/ScrollArea.vue'
 import { useSnippetsStoreWithOut } from '@/store/snippetsStore'
-import { Egg } from 'lucide-vue-next'
+import { Egg, Pencil, Trash } from 'lucide-vue-next'
 import { storeToRefs } from 'pinia'
 import { computed, ref } from 'vue'
 
 const snippetsStore = useSnippetsStoreWithOut()
-const { snippets, isSnippetsEditing, isCreatingSnippet } = storeToRefs(snippetsStore)
+const { snippets, isSnippetsEditing, editingSnippet } = storeToRefs(snippetsStore)
 
 const categories = ref(Object.keys(snippets.value))
 const selectedCategory = ref(categories.value[0])
 
 const snippetsTitles = ref(Object.keys(snippets.value[selectedCategory.value] || {}))
 const selectedSnippetsTitle = ref('')
+
+// 刷新细分类别
+function refreshSnippetsTitles() {
+  snippetsTitles.value = Object.keys(snippets.value[selectedCategory.value] || {})
+}
 
 const selectedSnippet = computed(() => {
   if (selectedCategory.value && selectedSnippetsTitle.value) {
@@ -48,8 +53,22 @@ function handleAddSnippets() {
 
 // 创建完成后更新列表
 function handleEditorClose() {
-  snippetsTitles.value = Object.keys(snippets.value[selectedCategory.value] || {})
   snippetsStore.cancelCreatingSnippet()
+  refreshSnippetsTitles()
+}
+
+function handleEditSnippets(category: string, title: string) {
+  snippetsStore.startUpdatingSnippet(category, title)
+  refreshSnippetsTitles()
+}
+
+function handleDeleteSnippets(category: string, title: string) {
+  if (selectedCategory.value === category && selectedSnippetsTitle.value === title) {
+    selectedSnippetsTitle.value = snippetsTitles.value[0]
+    refreshSnippetsTitles()
+  }
+
+  snippetsStore.deleteSnippet(category, title)
 }
 </script>
 
@@ -93,10 +112,27 @@ function handleEditorClose() {
                 :key="title"
                 :class="{ 'bg-gray-800': selectedSnippetsTitle === title }"
                 :title="title"
-                class="mb-1 cursor-pointer truncate rounded p-1 px-2 transition hover:bg-gray-800"
+                class="group relative mb-1 flex cursor-pointer items-center truncate rounded p-1 px-2 transition-colors hover:bg-gray-800"
                 @click="selectSnippetsTitle(title)"
               >
-                {{ title }}
+                <span class="flex-1">
+                  {{ title }}
+                </span>
+
+                <div class="flex gap-2 opacity-0 group-hover:opacity-100">
+                  <div
+                    class="cursor-pointer hover:text-blue-500"
+                    @click.prevent="() => handleEditSnippets(selectedCategory, title)"
+                  >
+                    <Pencil class="size-3" />
+                  </div>
+                  <div
+                    class="cursor-pointer hover:text-red-500"
+                    @click.prevent="() => handleDeleteSnippets(selectedCategory, title)"
+                  >
+                    <Trash class="size-3" />
+                  </div>
+                </div>
               </div>
             </template>
           </ScrollArea>
@@ -105,8 +141,8 @@ function handleEditorClose() {
 
       <!-- 代码区域 -->
       <div class="h-full flex-1 overflow-hidden">
-        <template v-if="isSnippetsEditing || isCreatingSnippet">
-          <SnippetsEditor @close="handleEditorClose" />
+        <template v-if="isSnippetsEditing">
+          <SnippetsEditor :editing-snippet="editingSnippet" @close="handleEditorClose" />
         </template>
 
         <template v-else>

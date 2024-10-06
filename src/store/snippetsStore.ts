@@ -7,6 +7,7 @@ interface SnippetStore {
   snippets: Snippet
   isSnippetsEditing: boolean
   isCreatingSnippet: boolean
+  editingSnippet: SnippetEditor | undefined
 }
 
 const snippetsStore = defineStore('snippets', {
@@ -14,6 +15,7 @@ const snippetsStore = defineStore('snippets', {
     snippets: {},
     isSnippetsEditing: false,
     isCreatingSnippet: false,
+    editingSnippet: undefined,
   }),
   actions: {
     initSnippets() {
@@ -64,6 +66,23 @@ const snippetsStore = defineStore('snippets', {
     },
     updateSnippet(snippet: SnippetEditor) {
       this.snippets[snippet.category][snippet.title] = snippet.content
+    },
+    startUpdatingSnippet(category: string, title: string) {
+      // 禁止创建
+      this.isCreatingSnippet = false
+      // 重置编辑状态
+      this.isSnippetsEditing = false
+      // 开始编辑
+      this.isSnippetsEditing = true
+      // 设置编辑的内容
+      this.editingSnippet = {
+        category,
+        title,
+        content: this.snippets[category][title],
+      }
+    },
+    deleteSnippet(category: string, title: string) {
+      delete this.snippets[category][title]
     },
   },
 })
