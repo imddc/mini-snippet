@@ -2,6 +2,24 @@ import type { Snippet } from '@/types/snippet'
 
 // 模拟数据
 export const snippets: Snippet = {
+  mock: {
+    // 给我十五条空的数据 key 不为空
+    template1: 'hhh',
+    template2: 'hhh',
+    template3: 'hhh',
+    template4: 'hhh',
+    template5: 'hhh',
+    template6: 'hhh',
+    template7: 'hhh',
+    template8: 'hhh',
+    template9: 'hhh',
+    template10: 'hhh',
+    template11: 'hhh',
+    template12: 'hhh',
+    template13: 'hhh',
+    template14: 'hhh',
+    template15: 'hhh',
+  },
   js: {
     debounce: `function debounce(func, wait) {
   let timeout;
@@ -57,10 +75,10 @@ export const snippets: Snippet = {
   css: {},
   html: {},
   http: {},
-  node: {},
-  git: {},
+  javascript: {},
+  typescript: {},
   docker: {},
-  k8s: {},
+  git: {},
   linux: {},
   macos: {},
 }
