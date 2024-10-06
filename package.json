@@ -27,7 +27,8 @@
     "tailwind-merge": "^2.5.3",
     "tailwindcss-animate": "^1.0.7",
     "vue": "^3.3.4",
-    "vue-router": "^4.4.5"
+    "vue-router": "^4.4.5",
+    "vue-sonner": "^1.2.1"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^3.7.3",

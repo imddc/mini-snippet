@@ -31,9 +31,11 @@ function saveSnippet() {
   if (snippet.value.category && snippet.value.title && snippet.value.content) {
     if (isCreatingSnippet.value) {
       snippetsStore.addSnippet(snippet.value)
+      snippetsStore.cancelCreatingSnippet()
     }
     else {
       snippetsStore.updateSnippet(snippet.value)
+      snippetsStore.cancelUpdatingSnippet()
     }
     emit('close')
   }
@@ -79,7 +81,9 @@ onUpdated(() => {
       <label for="content" class="mb-2 block text-sm font-medium text-gray-400">content</label>
       <ScrollArea class="h-[calc(100vh-300px)]">
         <Textarea
-          id="content" v-model="snippet.content" placeholder="enter your code snippet here"
+          id="content"
+          v-model="snippet.content"
+          placeholder="enter your code snippet here"
           class="size-full min-h-[200px] resize-none font-mono"
         />
       </ScrollArea>

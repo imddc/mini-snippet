@@ -4,6 +4,7 @@ import { store } from '@/plugins/pinia'
 import { defineStore } from 'pinia'
 
 interface SnippetStore {
+  beforeSnippets: SnippetEditor | undefined
   snippets: Snippet
   isSnippetsEditing: boolean
   isCreatingSnippet: boolean
@@ -12,6 +13,7 @@ interface SnippetStore {
 
 const snippetsStore = defineStore('snippets', {
   state: (): SnippetStore => ({
+    beforeSnippets: undefined,
     snippets: {},
     isSnippetsEditing: false,
     isCreatingSnippet: false,
@@ -65,9 +67,14 @@ const snippetsStore = defineStore('snippets', {
       this.snippets[snippet.category][snippet.title] = snippet.content
     },
     updateSnippet(snippet: SnippetEditor) {
+      if (!this.beforeSnippets) {
+        return
+      }
+      delete this.snippets[this.beforeSnippets.category][this.beforeSnippets.title]
       this.snippets[snippet.category][snippet.title] = snippet.content
     },
-    startUpdatingSnippet(category: string, title: string) {
+    startUpdatingSnippet(beforeSnippets: SnippetEditor) {
+      this.beforeSnippets = { ...beforeSnippets }
       // 禁止创建
       this.isCreatingSnippet = false
       // 重置编辑状态
@@ -75,11 +82,13 @@ const snippetsStore = defineStore('snippets', {
       // 开始编辑
       this.isSnippetsEditing = true
       // 设置编辑的内容
-      this.editingSnippet = {
-        category,
-        title,
-        content: this.snippets[category][title],
-      }
+      this.editingSnippet = { ...beforeSnippets }
+    },
+    cancelUpdatingSnippet() {
+      this.beforeSnippets = undefined
+      this.isSnippetsEditing = false
+      this.isCreatingSnippet = false
+      this.editingSnippet = undefined
     },
     deleteSnippet(category: string, title: string) {
       delete this.snippets[category][title]

@@ -4,7 +4,7 @@ import { Egg } from 'lucide-vue-next'
 import 'highlight.js/styles/github-dark.min.css'
 
 defineProps<{
-  selectedSnippet: string
+  selectedSnippet?: string
 }>()
 
 function highlightCode(code: string) {

@@ -7,6 +7,7 @@ import { useSnippetsStoreWithOut } from '@/store/snippetsStore'
 import { Egg, Pencil, Trash } from 'lucide-vue-next'
 import { storeToRefs } from 'pinia'
 import { computed, ref } from 'vue'
+import { toast } from 'vue-sonner'
 
 const snippetsStore = useSnippetsStoreWithOut()
 const { snippets, isSnippetsEditing, editingSnippet } = storeToRefs(snippetsStore)
@@ -53,22 +54,26 @@ function handleAddSnippets() {
 
 // 创建完成后更新列表
 function handleEditorClose() {
-  snippetsStore.cancelCreatingSnippet()
   refreshSnippetsTitles()
 }
 
 function handleEditSnippets(category: string, title: string) {
-  snippetsStore.startUpdatingSnippet(category, title)
+  snippetsStore.startUpdatingSnippet({
+    category,
+    title,
+    content: snippets.value[category][title],
+  })
   refreshSnippetsTitles()
 }
 
 function handleDeleteSnippets(category: string, title: string) {
   if (selectedCategory.value === category && selectedSnippetsTitle.value === title) {
-    selectedSnippetsTitle.value = snippetsTitles.value[0]
+    snippetsStore.deleteSnippet(category, title)
     refreshSnippetsTitles()
-  }
+    selectedSnippetsTitle.value = snippetsTitles.value.length > 0 ? snippetsTitles.value[0] : ''
 
-  snippetsStore.deleteSnippet(category, title)
+    toast('delete success')
+  }
 }
 </script>
 
@@ -112,22 +117,22 @@ function handleDeleteSnippets(category: string, title: string) {
                 :key="title"
                 :class="{ 'bg-gray-800': selectedSnippetsTitle === title }"
                 :title="title"
-                class="group relative mb-1 flex cursor-pointer items-center truncate rounded p-1 px-2 transition-colors hover:bg-gray-800"
+                class="group relative mb-1 flex cursor-pointer items-center truncate rounded p-1 px-2  transition-colors hover:bg-gray-800"
                 @click="selectSnippetsTitle(title)"
               >
-                <span class="flex-1">
+                <span class="truncate group-hover:max-w-[calc(100%-2rem)]">
                   {{ title }}
                 </span>
 
-                <div class="flex gap-2 opacity-0 group-hover:opacity-100">
+                <div class="absolute right-1 flex gap-1 opacity-0 group-hover:opacity-100">
                   <div
-                    class="cursor-pointer hover:text-blue-500"
+                    class="cursor-pointer rounded-md bg-gray-500/50 p-1 transition hover:bg-gray-600/50 hover:text-blue-500"
                     @click.prevent="() => handleEditSnippets(selectedCategory, title)"
                   >
                     <Pencil class="size-3" />
                   </div>
                   <div
-                    class="cursor-pointer hover:text-red-500"
+                    class="cursor-pointer rounded-md bg-gray-500/50 p-1 transition hover:bg-gray-600/50 hover:text-red-500"
                     @click.prevent="() => handleDeleteSnippets(selectedCategory, title)"
                   >
                     <Trash class="size-3" />
