@@ -11,5 +11,5 @@
 }
 
 .category-wrap {
-  @apply rounded-lg bg-gray-700/90 flex-1 shadow-md w-[calc(50%-0.5rem)] overflow-hidden;
+  @apply rounded-lg bg-gray-700/90 shadow-md overflow-hidden;
 }
