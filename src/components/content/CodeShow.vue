@@ -25,7 +25,7 @@ function highlightCode(code: string) {
     <template v-else>
       <div class="flex-col-center h-full gap-4 text-gray-200/90">
         <Egg class="size-10" />
-        <p>Select a category and subcategory</p>
+        <p>Select a category and snippetsTitle</p>
       </div>
     </template>
   </div>
