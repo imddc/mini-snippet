@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import CodeShow from '@/components/content/CodeShow.vue'
+import Search from '@/components/content/Search.vue'
 import ScrollArea from '@/components/ui/scroll-area/ScrollArea.vue'
 import { useSnippetsStoreWithOut } from '@/store/snippetsStore'
-import { CirclePlus } from 'lucide-vue-next'
+import { useDebounceFn } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import { computed, ref } from 'vue'
 
@@ -12,7 +13,7 @@ const { snippets } = storeToRefs(snippetsStore)
 const categories = ref(Object.keys(snippets.value))
 const selectedCategory = ref(categories.value[0])
 
-const snippetsTitles = computed(() => Object.keys(snippets.value[selectedCategory.value] || {}))
+const snippetsTitles = ref(Object.keys(snippets.value[selectedCategory.value] || {}))
 const selectedSnippetsTitle = ref('')
 
 const selectedSnippet = computed(() => {
@@ -25,10 +26,19 @@ const selectedSnippet = computed(() => {
 function selectCategory(category: string) {
   selectedCategory.value = category
   selectedSnippetsTitle.value = ''
+  snippetsTitles.value = Object.keys(snippets.value[selectedCategory.value] || {})
 }
 
 function selectSnippetsTitle(title: string) {
   selectedSnippetsTitle.value = title
+}
+
+// 搜索相关
+function handleSearch(searchValue: string) {
+  snippetsTitles.value = snippetsStore.matchSnippetsByTitleAndCategory(
+    searchValue,
+    selectedCategory.value,
+  )
 }
 </script>
 
@@ -55,13 +65,7 @@ function selectSnippetsTitle(title: string) {
 
         <!-- 细分类别 -->
         <div class="category-wrap w-3/5">
-          <div class="relative h-8 border-b text-sm">
-            <input
-              placeholder="search..."
-              class="size-full bg-gray-600/90 p-2"
-            >
-            <CirclePlus class="absolute right-2 top-2 size-4" />
-          </div>
+          <Search @search="handleSearch" />
 
           <ScrollArea class="h-[calc(100%-2rem)] p-2 pb-1">
             <div

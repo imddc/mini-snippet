@@ -37,6 +37,16 @@ const snippetsStore = defineStore('snippets', {
     getSnippetsByTitle(title: string) {
       return Object.values(this.snippets).flatMap(category => category[title] || [])
     },
+    getSnippetsByTitleAndCategory(title: string, category: string): string[] {
+      const res = this.snippets[category][title]
+      return res ? [res] : []
+    },
+
+    matchSnippetsByTitleAndCategory(title: string, category: string): string[] {
+      const regex = new RegExp(title)
+      const res = Object.keys(this.snippets[category]).filter(sub => regex.test(sub))
+      return res
+    },
   },
 })
 
