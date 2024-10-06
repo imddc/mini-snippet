@@ -34,24 +34,25 @@ watchEffect(() => {
         <div class="flex-1 rounded-lg bg-pink-200 p-1">
           <Input
             v-model.trim="subCategory"
-            placeholder="输入代码片段"
-            class="h-14 text-lg ring-gray-600 focus-visible:ring-0 focus-visible:ring-offset-0"
+            placeholder="input code ..."
+            class="h-12 text-lg ring-gray-600 focus-visible:ring-0 focus-visible:ring-offset-0"
           />
 
           <template v-if="foundSubcategories.length">
-            <div class="w-full rounded-lg backdrop-blur-lg">
+            <div class="w-full overflow-hidden rounded-lg backdrop-blur-lg">
               <ul
-                ref="foundSubcategoriesListRef"
                 class="space-y-1 p-2 text-lg"
               >
                 <li
                   v-for="sub in foundSubcategories"
                   :key="sub"
                   :class="{ 'bg-gray-600': chooseSubCategory === sub }"
-                  class="cursor-pointer rounded-md p-1 hover:bg-gray-600"
+                  class="cursor-pointer truncate rounded-md p-1 hover:bg-gray-600"
                   @click="chooseSubCategory = sub"
                 >
-                  {{ sub }}
+                  <code class="text-sm">
+                    {{ sub }} - {{ snippetsStore.getSnippets(chooseSubCategory) }}
+                  </code>
                 </li>
               </ul>
             </div>
@@ -59,7 +60,7 @@ watchEffect(() => {
         </div>
 
         <button
-          class="flex size-10 items-center justify-center self-start rounded-full bg-gray-500 text-white transition duration-300 ease-in-out hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-700"
+          class="m-2 flex size-12 items-center justify-center self-start rounded-full bg-gray-500 text-white transition duration-300 ease-in-out hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-700"
           @click="goContent"
         >
           <EggIcon class="size-5" />
