@@ -1,15 +1,19 @@
-import type { Snippet } from '@/types/snippet'
+import type { Snippet, SnippetEditor } from '@/types/snippet'
 import { snippets } from '@/constants/mockData'
 import { store } from '@/plugins/pinia'
 import { defineStore } from 'pinia'
 
 interface SnippetStore {
   snippets: Snippet
+  isSnippetsEditing: boolean
+  isCreatingSnippet: boolean
 }
 
 const snippetsStore = defineStore('snippets', {
   state: (): SnippetStore => ({
     snippets: {},
+    isSnippetsEditing: false,
+    isCreatingSnippet: false,
   }),
   actions: {
     initSnippets() {
@@ -46,6 +50,20 @@ const snippetsStore = defineStore('snippets', {
       const regex = new RegExp(title)
       const res = Object.keys(this.snippets[category]).filter(sub => regex.test(sub))
       return res
+    },
+    startCreatingSnippet() {
+      this.isSnippetsEditing = true
+      this.isCreatingSnippet = true
+    },
+    cancelCreatingSnippet() {
+      this.isSnippetsEditing = false
+      this.isCreatingSnippet = false
+    },
+    addSnippet(snippet: SnippetEditor) {
+      this.snippets[snippet.category][snippet.title] = snippet.content
+    },
+    updateSnippet(snippet: SnippetEditor) {
+      this.snippets[snippet.category][snippet.title] = snippet.content
     },
   },
 })

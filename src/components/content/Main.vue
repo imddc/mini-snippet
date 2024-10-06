@@ -9,7 +9,7 @@ import { storeToRefs } from 'pinia'
 import { computed, ref } from 'vue'
 
 const snippetsStore = useSnippetsStoreWithOut()
-const { snippets } = storeToRefs(snippetsStore)
+const { snippets, isSnippetsEditing, isCreatingSnippet } = storeToRefs(snippetsStore)
 
 const categories = ref(Object.keys(snippets.value))
 const selectedCategory = ref(categories.value[0])
@@ -42,9 +42,14 @@ function handleSearch(searchValue: string) {
   )
 }
 
-const isAddingSnippets = ref(false)
 function handleAddSnippets() {
-  isAddingSnippets.value = true
+  snippetsStore.startCreatingSnippet()
+}
+
+// 创建完成后更新列表
+function handleEditorClose() {
+  snippetsTitles.value = Object.keys(snippets.value[selectedCategory.value] || {})
+  snippetsStore.cancelCreatingSnippet()
 }
 </script>
 
@@ -100,8 +105,8 @@ function handleAddSnippets() {
 
       <!-- 代码区域 -->
       <div class="h-full flex-1 overflow-hidden">
-        <template v-if="isAddingSnippets">
-          <SnippetsEditor />
+        <template v-if="isSnippetsEditing || isCreatingSnippet">
+          <SnippetsEditor @close="handleEditorClose" />
         </template>
 
         <template v-else>

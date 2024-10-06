@@ -1,25 +1,24 @@
 <script setup lang="ts">
+import type { SnippetEditor } from '@/types/snippet'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import { useSnippetsStoreWithOut } from '@/store/snippetsStore'
-import { computed, ref } from 'vue'
+import { storeToRefs } from 'pinia'
+import { ref } from 'vue'
 
-const props = defineProps<{
-  editingSnippet?: {
-    category: string
-    title: string
-    content: string
-  }
-}>()
+const props = withDefaults(defineProps<{
+  editingSnippet?: SnippetEditor
+}>(), {})
 
 const emit = defineEmits<{
   (e: 'close'): void
 }>()
 
 const snippetsStore = useSnippetsStoreWithOut()
+const { isCreatingSnippet } = storeToRefs(snippetsStore)
 
 const snippet = ref(props.editingSnippet || {
   category: '',
@@ -27,17 +26,15 @@ const snippet = ref(props.editingSnippet || {
   content: '',
 })
 
-const isEditing = computed(() => !!props.editingSnippet)
-
 const categories = snippetsStore.getCategories()
 
 function saveSnippet() {
   if (snippet.value.category && snippet.value.title && snippet.value.content) {
-    if (isEditing.value) {
-      snippetsStore.updateSnippet(snippet.value)
+    if (isCreatingSnippet.value) {
+      snippetsStore.addSnippet(snippet.value)
     }
     else {
-      snippetsStore.addSnippet(snippet.value)
+      snippetsStore.updateSnippet(snippet.value)
     }
     emit('close')
   }
@@ -87,7 +84,7 @@ function cancelEdit() {
         cancel
       </Button>
       <Button variant="outline" size="sm" @click="saveSnippet">
-        {{ isEditing ? 'update' : 'save' }} snippet
+        {{ isCreatingSnippet ? 'create' : 'update' }} snippet
       </Button>
     </div>
   </div>
