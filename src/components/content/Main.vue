@@ -1,10 +1,11 @@
 <script setup lang="ts">
+import CategoryAddition from '@/components/content/CategoryAddition.vue'
 import CodeShow from '@/components/content/CodeShow.vue'
 import Search from '@/components/content/Search.vue'
 import SnippetsEditor from '@/components/content/SnippetsEditor.vue'
 import ScrollArea from '@/components/ui/scroll-area/ScrollArea.vue'
 import { useSnippetsStoreWithOut } from '@/store/snippetsStore'
-import { Egg, FolderPlus, Pencil, Trash } from 'lucide-vue-next'
+import { Egg, Folder, Pencil, Trash } from 'lucide-vue-next'
 import { storeToRefs } from 'pinia'
 import { computed, ref } from 'vue'
 import { toast } from 'vue-sonner'
@@ -75,38 +76,27 @@ function handleDeleteSnippets(category: string, title: string) {
     toast('delete success')
   }
 }
-
-function handleAddCategory() {
-  console.log('add category')
-}
 </script>
 
 <template>
   <div class="p-4 pt-0">
     <div class="flex h-[calc(100vh-1rem-var(--content-header-height))] gap-2">
       <!-- 左侧导航菜单 -->
-      <div class="flex w-64 shrink-0 gap-2 text-sm text-white">
+      <div class="flex w-80 shrink-0 gap-2 text-sm text-white">
         <!-- 大分类 -->
         <div class="category-wrap w-2/5">
-          <div
-            class="flex-center h-8 w-full cursor-pointer gap-2 border-b border-gray-500 bg-gray-700/90"
-            @click="handleAddCategory"
-          >
-            <div class="flex-center size-5 text-gray-400" title="add category">
-              <FolderPlus class="size-full" />
-            </div>
-          </div>
-
+          <CategoryAddition />
           <ScrollArea class="size-full h-[calc(100%-2rem)] p-2">
             <div
               v-for="category in categories"
               :key="category"
               :class="{ 'bg-gray-800': selectedCategory === category }"
               :title="category"
-              class="mb-1 cursor-pointer truncate rounded p-1 px-2 transition hover:bg-gray-800"
+              class="mb-1 flex cursor-pointer items-center gap-1 truncate rounded p-1 pr-2 transition hover:bg-gray-800"
               @click="selectCategory(category)"
             >
-              {{ category }}
+              <Folder class="size-3 shrink-0" />
+              <span class="truncate">{{ category }}</span>
             </div>
           </ScrollArea>
         </div>
