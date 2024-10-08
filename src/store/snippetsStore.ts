@@ -1,6 +1,7 @@
 import type { Snippet, SnippetEditor } from '@/types/snippet'
 import { snippets } from '@/constants/mockData'
 import { store } from '@/plugins/pinia'
+import { createRegexNoCase } from '@/utils/core'
 import { defineStore } from 'pinia'
 
 interface SnippetStore {
@@ -39,7 +40,7 @@ const snippetsStore = defineStore('snippets', {
       return result
     },
     matchSnippetsTitles(subcategory: string) {
-      const regex = new RegExp(subcategory)
+      const regex = createRegexNoCase(subcategory)
       return this.getAllSnippetsTitles().filter(sub => regex.test(sub))
     },
     getSnippetsByTitle(title: string) {
@@ -51,7 +52,7 @@ const snippetsStore = defineStore('snippets', {
     },
 
     matchSnippetsByTitleAndCategory(title: string, category: string): string[] {
-      const regex = new RegExp(title)
+      const regex = createRegexNoCase(title)
       const res = Object.keys(this.snippets[category]).filter(sub => regex.test(sub))
       return res
     },
