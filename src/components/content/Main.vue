@@ -1,12 +1,12 @@
 <script setup lang="ts">
+import CategoryEditDialog from '@/components/common/CategoryEditDialog.vue'
 import Actions from '@/components/content/Actions.vue'
-import CategoryAddition from '@/components/content/CategoryAddition.vue'
 import CodeShow from '@/components/content/CodeShow.vue'
 import Search from '@/components/content/Search.vue'
 import SnippetsEditor from '@/components/content/SnippetsEditor.vue'
 import ScrollArea from '@/components/ui/scroll-area/ScrollArea.vue'
 import { useSnippetsStoreWithOut } from '@/store/snippetsStore'
-import { Egg, Folder } from 'lucide-vue-next'
+import { Egg, Folder, FolderPlus } from 'lucide-vue-next'
 import { storeToRefs } from 'pinia'
 import { computed, ref } from 'vue'
 import { toast } from 'vue-sonner'
@@ -43,6 +43,27 @@ const selectedSnippet = computed(() => {
 function selectCategory(category: string) {
   selectedCategory.value = category
   selectedSnippetsTitle.value = ''
+}
+
+const isAddCategoryDialogOpen = ref(false)
+const categoryDialogCategory = ref('')
+function handleAddCategory() {
+  categoryDialogCategory.value = ''
+  isAddCategoryDialogOpen.value = true
+}
+
+function handleEditCategory(category: string) {
+  categoryDialogCategory.value = category
+  isAddCategoryDialogOpen.value = true
+}
+
+function handleDeleteCategory(category: string) {
+  snippetsStore.deleteCategory(category)
+}
+
+function handleCloseCategoryDialog() {
+  isAddCategoryDialogOpen.value = false
+  categoryDialogCategory.value = ''
 }
 
 function selectSnippetsTitle(title: string) {
@@ -92,7 +113,14 @@ function handleDeleteSnippets(category: string, title: string) {
       <div class="flex w-80 shrink-0 gap-2 text-sm text-white">
         <!-- 大分类 -->
         <div class="category-wrap w-2/5">
-          <CategoryAddition />
+          <div
+            class="flex-center h-8 w-full cursor-pointer gap-2 border-b border-gray-500 bg-gray-700/90"
+            @click="handleAddCategory"
+          >
+            <div class="flex-center size-5 text-gray-400" title="add category">
+              <FolderPlus class="size-full" />
+            </div>
+          </div>
           <ScrollArea class="size-full h-[calc(100%-2rem)] p-2">
             <div
               v-for="category in snippetsStore.getCategories()"
@@ -114,6 +142,8 @@ function handleDeleteSnippets(category: string, title: string) {
                 <Actions
                   :edit="true"
                   :delete="true"
+                  @edit="handleEditCategory(category)"
+                  @delete="handleDeleteCategory(category)"
                 />
               </div>
             </div>
@@ -171,5 +201,11 @@ function handleDeleteSnippets(category: string, title: string) {
         </template>
       </div>
     </div>
+
+    <CategoryEditDialog
+      v-if="isAddCategoryDialogOpen"
+      :category="categoryDialogCategory"
+      @close="handleCloseCategoryDialog"
+    />
   </div>
 </template>

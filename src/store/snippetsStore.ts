@@ -96,6 +96,10 @@ const snippetsStore = defineStore('snippets', {
     addCategory(category: string) {
       this.snippets[category] = {}
     },
+    updateCategory(category: string, newCategory: string) {
+      this.snippets[newCategory] = this.snippets[category]
+      delete this.snippets[category]
+    },
     deleteCategory(category: string) {
       delete this.snippets[category]
     },
