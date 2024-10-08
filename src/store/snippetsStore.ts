@@ -57,11 +57,12 @@ const snippetsStore = defineStore('snippets', {
     },
     // snippet curd
     startCreatingSnippet() {
+      this.cancelUpdatingSnippet()
+      this.cancelCreatingSnippet()
       this.isSnippetsEditing = true
       this.isCreatingSnippet = true
     },
     cancelCreatingSnippet() {
-      this.isSnippetsEditing = false
       this.isCreatingSnippet = false
     },
     addSnippet(snippet: SnippetEditor) {
@@ -75,20 +76,16 @@ const snippetsStore = defineStore('snippets', {
       this.snippets[snippet.category][snippet.title] = snippet.content
     },
     startUpdatingSnippet(beforeSnippets: SnippetEditor) {
-      this.beforeSnippets = { ...beforeSnippets }
-      // 禁止创建
-      this.isCreatingSnippet = false
-      // 重置编辑状态
-      this.isSnippetsEditing = false
-      // 开始编辑
+      this.cancelCreatingSnippet()
+      this.cancelUpdatingSnippet()
       this.isSnippetsEditing = true
-      // 设置编辑的内容
+      this.beforeSnippets = { ...beforeSnippets }
       this.editingSnippet = { ...beforeSnippets }
     },
     cancelUpdatingSnippet() {
-      this.beforeSnippets = undefined
-      this.isSnippetsEditing = false
       this.isCreatingSnippet = false
+      this.isSnippetsEditing = false
+      this.beforeSnippets = undefined
       this.editingSnippet = undefined
     },
     deleteSnippet(category: string, title: string) {

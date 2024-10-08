@@ -8,6 +8,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { useSnippetsStoreWithOut } from '@/store/snippetsStore'
 import { storeToRefs } from 'pinia'
 import { onUpdated, ref } from 'vue'
+import { toast } from 'vue-sonner'
 
 const props = withDefaults(defineProps<{
   editingSnippet?: SnippetEditor
@@ -20,13 +21,14 @@ const emit = defineEmits<{
 const snippetsStore = useSnippetsStoreWithOut()
 const { isCreatingSnippet } = storeToRefs(snippetsStore)
 
-const snippet = ref(props.editingSnippet || {
+const snippetTemplate = {
   category: '',
   title: '',
   content: '',
-})
+}
 
-const categories = snippetsStore.getCategories()
+const snippet = ref(props.editingSnippet || snippetTemplate)
+
 function saveSnippet() {
   if (snippet.value.category && snippet.value.title && snippet.value.content) {
     if (isCreatingSnippet.value) {
@@ -40,8 +42,7 @@ function saveSnippet() {
     emit('close')
   }
   else {
-    // 这里可以添加错误提示
-    console.error('Please fill in all fields')
+    toast.error('Please fill in all fields')
   }
 }
 
@@ -51,7 +52,7 @@ function cancelEdit() {
 
 onUpdated(() => {
   if (props.editingSnippet) {
-    snippet.value = props.editingSnippet
+    snippet.value = props.editingSnippet || { ...snippetTemplate }
   }
 })
 </script>
@@ -66,7 +67,7 @@ onUpdated(() => {
             <SelectValue placeholder="Select a category" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem v-for="category in categories" :key="category" :value="category">
+            <SelectItem v-for="category in snippetsStore.getCategories()" :key="category" :value="category">
               {{ category }}
             </SelectItem>
           </SelectContent>
@@ -90,10 +91,10 @@ onUpdated(() => {
     </div>
     <div class="flex justify-end space-x-4">
       <Button variant="outline" size="sm" @click="cancelEdit">
-        cancel
+        Cancel
       </Button>
       <Button variant="outline" size="sm" @click="saveSnippet">
-        {{ isCreatingSnippet ? 'create' : 'update' }} snippet
+        {{ isCreatingSnippet ? 'Create' : 'Update' }}
       </Button>
     </div>
   </div>

@@ -61,6 +61,10 @@ function handleEditSnippets(category: string, title: string) {
   })
 }
 
+function handleEditorClose() {
+  snippetsStore.cancelUpdatingSnippet()
+}
+
 function handleDeleteSnippets(category: string, title: string) {
   if (selectedCategory.value === category && selectedSnippetsTitle.value === title) {
     snippetsStore.deleteSnippet(category, title)
