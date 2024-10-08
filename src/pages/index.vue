@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import Input from '@/components/ui/input/Input.vue'
+import ScrollArea from '@/components/ui/scroll-area/ScrollArea.vue'
 import { Events } from '@/constants/eventEnums'
 import { useSnippetsStoreWithOut } from '@/store/snippetsStore'
 import { emitEvent } from '@/utils/eventHandler'
@@ -27,45 +28,50 @@ watchEffect(() => {
 </script>
 
 <template>
-  <div data-tauri-drag-region class="flex min-h-screen cursor-pointer flex-col items-center space-y-2 rounded-lg bg-gray-800/95 p-2 shadow-2xl backdrop-blur-lg">
+  <div class="flex-center flex select-none rounded-lg p-10">
     <!-- 主体 -->
-    <div class="w-full max-w-2xl ">
-      <div class="flex-between gap-2 p-3">
-        <div class="flex-1 rounded-lg bg-pink-200 p-1">
-          <Input
-            v-model.trim="snippetsTitle"
-            placeholder="input code ..."
-            class="h-12 text-lg"
-          />
+    <div
+      data-tauri-drag-region
+      class="index-animate-gradient flex w-full justify-between gap-2 rounded-md p-2 shadow-2xl backdrop-blur-lg"
+    >
+      <!-- input -->
+      <div
+        data-tauri-drag-region
+        class="flex flex-1 flex-col gap-1 rounded-lg bg-gray-800/50 p-1"
+      >
+        <Input
+          v-model.trim="snippetsTitle"
+          placeholder="input code ..."
+          class="mt-1 h-12 text-lg"
+        />
 
-          <template v-if="foundSnippetsTitles.length">
-            <div class="w-full overflow-hidden rounded-lg backdrop-blur-lg">
-              <ul
-                class="space-y-1 p-2 text-lg"
-              >
-                <li
-                  v-for="title in foundSnippetsTitles"
-                  :key="title"
-                  :class="{ 'bg-gray-600': chooseSnippetsTitle === title }"
-                  class="cursor-pointer truncate rounded-md p-1 hover:bg-gray-600"
-                  @click="chooseSnippetsTitle = title"
-                >
-                  <code class="text-sm">
-                    {{ title }} - {{ snippetsStore.getSnippetsByTitle(title) }}
-                  </code>
-                </li>
-              </ul>
-            </div>
-          </template>
-        </div>
-
-        <button
-          class="m-2 flex size-12 items-center justify-center self-start rounded-full bg-gray-500 text-white transition duration-300 ease-in-out hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-700"
-          @click="goContent"
+        <!-- 下拉列表 -->
+        <div
+          v-if="foundSnippetsTitles.length"
+          class="text-xl text-slate-500 backdrop-blur"
         >
-          <EggIcon class="size-5" />
-        </button>
+          <ScrollArea class="h-[400px] pr-3">
+            <div
+              v-for="title in foundSnippetsTitles"
+              :key="title"
+              class="mr-2 mt-1 w-full cursor-pointer overflow-hidden truncate rounded-md p-1 transition hover:bg-gray-300/50"
+              @click="chooseSnippetsTitle = title"
+            >
+              <div>
+                {{ title }}
+              </div>
+            </div>
+          </ScrollArea>
+        </div>
       </div>
+
+      <!-- button -->
+      <button
+        class="flex-center m-2 size-12 shrink-0 grow-0 self-start rounded-full bg-gray-800/50 text-white transition duration-300 ease-in-out hover:bg-gray-700/50 focus:outline-none focus:ring-2 focus:ring-gray-700"
+        @click="goContent"
+      >
+        <EggIcon class="size-5" />
+      </button>
     </div>
   </div>
 </template>

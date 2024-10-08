@@ -14,7 +14,6 @@
       {
         "label": "main",
         "width": 600,
-        "height": 200,
         "decorations": false,
         "transparent": true,
         "resizable": false,

@@ -4,6 +4,12 @@
   animation: gradient-x 15s ease infinite;
 }
 
+.index-animate-gradient {
+  @apply bg-gradient-to-br from-purple-700 to-blue-500;
+  background-size: 200% 200%;
+  animation: gradient-x 15s ease infinite;
+}
+
 @keyframes gradient-x {
   0%,
   100% {
