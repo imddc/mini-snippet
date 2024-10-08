@@ -36,24 +36,22 @@ function select() {
   console.log('select', chooseSnippetsIndex.value, foundSnippetsTitles.value[chooseSnippetsIndex.value])
 }
 
-onMounted(async () => {
-  useKeyMaps({
-    chooseNext: () => {
-      if (foundSnippetsTitles.value.length) {
-        chooseSnippetsIndex.value = chooseSnippetsIndex.value < foundSnippetsTitles.value.length - 1
-          ? chooseSnippetsIndex.value + 1
-          : 0
-      }
-    },
-    choosePrev: () => {
-      if (foundSnippetsTitles.value.length) {
-        chooseSnippetsIndex.value = chooseSnippetsIndex.value > 0
-          ? chooseSnippetsIndex.value - 1
-          : foundSnippetsTitles.value.length - 1
-      }
-    },
-    select,
-  })
+useKeyMaps({
+  chooseNext: () => {
+    if (foundSnippetsTitles.value.length) {
+      chooseSnippetsIndex.value = chooseSnippetsIndex.value < foundSnippetsTitles.value.length - 1
+        ? chooseSnippetsIndex.value + 1
+        : 0
+    }
+  },
+  choosePrev: () => {
+    if (foundSnippetsTitles.value.length) {
+      chooseSnippetsIndex.value = chooseSnippetsIndex.value > 0
+        ? chooseSnippetsIndex.value - 1
+        : foundSnippetsTitles.value.length - 1
+    }
+  },
+  select,
 })
 </script>
 
