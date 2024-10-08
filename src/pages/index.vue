@@ -4,12 +4,12 @@ import ScrollArea from '@/components/ui/scroll-area/ScrollArea.vue'
 import { Events } from '@/constants/eventEnums'
 import { useSnippetsStoreWithOut } from '@/store/snippetsStore'
 import { emitEvent } from '@/utils/eventHandler'
-import { EggIcon } from 'lucide-vue-next'
+import { Command, EggIcon } from 'lucide-vue-next'
 import { ref, watchEffect } from 'vue'
 
 const snippetsStore = useSnippetsStoreWithOut()
 
-const snippetsTitle = ref('')
+const searchValue = ref('')
 
 const chooseSnippetsTitle = ref('')
 const foundSnippetsTitles = ref<string[]>([])
@@ -19,7 +19,9 @@ function goContent() {
 }
 
 watchEffect(() => {
-  foundSnippetsTitles.value = snippetsTitle.value ? snippetsStore.matchSnippetsTitles(snippetsTitle.value) : []
+  foundSnippetsTitles.value = searchValue.value
+    ? snippetsStore.matchSnippetsTitles(searchValue.value)
+    : []
 
   if (foundSnippetsTitles.value.length) {
     chooseSnippetsTitle.value = foundSnippetsTitles.value[0]
@@ -28,50 +30,52 @@ watchEffect(() => {
 </script>
 
 <template>
-  <div class="flex-center flex select-none rounded-lg p-10">
+  <div class="flex-center flex select-none">
     <!-- 主体 -->
     <div
       data-tauri-drag-region
-      class="index-animate-gradient flex w-full justify-between gap-2 rounded-md p-2 shadow-2xl backdrop-blur-lg"
+      class="index-animate-gradient flex w-full flex-col gap-2 rounded-2xl p-3 backdrop-blur-lg"
     >
-      <!-- input -->
-      <div
-        data-tauri-drag-region
-        class="flex flex-1 flex-col gap-1 rounded-lg bg-gray-800/50 p-1"
-      >
+      <div class="flex-between gap-2">
         <Input
-          v-model.trim="snippetsTitle"
+          v-model.trim="searchValue"
           placeholder="input code ..."
-          class="mt-1 h-12 text-lg"
+          class="h-12 border-none bg-background/50 p-2 text-lg"
         />
-
-        <!-- 下拉列表 -->
-        <div
-          v-if="foundSnippetsTitles.length"
-          class="text-xl text-slate-500 backdrop-blur"
+        <!-- button -->
+        <button
+          class="flex-center size-12 shrink-0 grow-0 self-start rounded-full bg-gray-800/50 text-white transition duration-300 ease-in-out hover:bg-gray-700/50 focus:outline-none focus:ring-2 focus:ring-gray-700"
+          @click="goContent"
         >
-          <ScrollArea class="h-[400px] pr-3">
-            <div
-              v-for="title in foundSnippetsTitles"
-              :key="title"
-              class="mr-2 mt-1 w-full cursor-pointer overflow-hidden truncate rounded-md p-1 transition hover:bg-gray-300/50"
-              @click="chooseSnippetsTitle = title"
-            >
-              <div>
-                {{ title }}
-              </div>
-            </div>
-          </ScrollArea>
-        </div>
+          <EggIcon class="size-5" />
+        </button>
       </div>
 
-      <!-- button -->
-      <button
-        class="flex-center m-2 size-12 shrink-0 grow-0 self-start rounded-full bg-gray-800/50 text-white transition duration-300 ease-in-out hover:bg-gray-700/50 focus:outline-none focus:ring-2 focus:ring-gray-700"
-        @click="goContent"
+      <!-- 下拉列表 -->
+      <div
+        v-if="foundSnippetsTitles.length"
+        class="text-slate-300 backdrop-blur"
       >
-        <EggIcon class="size-5" />
-      </button>
+        <ScrollArea class="h-[400px] pr-3">
+          <div
+            v-for="(title, index) in foundSnippetsTitles"
+            :key="title"
+            :class="title === chooseSnippetsTitle ? 'bg-gray-300/50' : ''"
+            class="mt-1 w-full cursor-pointer truncate rounded-md p-1 px-2 text-lg hover:bg-gray-300/50"
+            @click="chooseSnippetsTitle = title"
+          >
+            <div class="flex-between">
+              <code>
+                {{ title }}
+              </code>
+              <div class="flex-center w-10 shrink-0 gap-1">
+                <Command class="size-4" />
+                {{ index + 1 }}
+              </div>
+            </div>
+          </div>
+        </ScrollArea>
+      </div>
     </div>
   </div>
 </template>
