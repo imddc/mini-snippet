@@ -11,8 +11,13 @@ const snippetsStore = useSnippetsStoreWithOut()
 const categoryName = ref('')
 
 function handleAddCategory() {
+  if (snippetsStore.getCategories().includes(categoryName.value)) {
+    toast.error('category already exists')
+    return
+  }
+
   snippetsStore.addCategory(categoryName.value)
-  toast('add category success')
+  toast.success('add category success')
 }
 </script>
 
