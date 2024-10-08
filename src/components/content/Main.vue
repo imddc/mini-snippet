@@ -45,6 +45,8 @@ function selectCategory(category: string) {
 }
 
 function selectSnippetsTitle(title: string) {
+  snippetsStore.cancelCreatingSnippet()
+  snippetsStore.cancelUpdatingSnippet()
   selectedSnippetsTitle.value = title
 }
 
@@ -66,13 +68,19 @@ function handleEditorClose() {
 }
 
 function handleDeleteSnippets(category: string, title: string) {
-  if (selectedCategory.value === category && selectedSnippetsTitle.value === title) {
+  if (selectedCategory.value === category) {
     snippetsStore.deleteSnippet(category, title)
-    selectedSnippetsTitle.value = snippetsTitles.value.length > 0
-      ? snippetsTitles.value[0]
-      : ''
-    toast('delete success')
+
+    // if delete the selected snippet, then select the first one
+    // if titles is empty, then set empty
+    if (selectedSnippetsTitle.value === title) {
+      selectedSnippetsTitle.value = snippetsTitles.value.length > 0
+        ? snippetsTitles.value[0]
+        : ''
+    }
   }
+
+  toast('delete success')
 }
 </script>
 
@@ -91,7 +99,7 @@ function handleDeleteSnippets(category: string, title: string) {
               :class="{ 'bg-gray-800': selectedCategory === category }"
               :title="category"
               class="mb-1 flex cursor-pointer items-center gap-1 truncate rounded p-1 pr-2 transition hover:bg-gray-800"
-              @click="selectCategory(category)"
+              @click.prevent="selectCategory(category)"
             >
               <Folder class="size-3 shrink-0" />
               <span class="truncate">{{ category }}</span>
@@ -118,8 +126,8 @@ function handleDeleteSnippets(category: string, title: string) {
                 :key="title"
                 :class="{ 'bg-gray-800': selectedSnippetsTitle === title }"
                 :title="title"
-                class="group relative mb-1 flex cursor-pointer items-center truncate rounded p-1 px-2  transition-colors hover:bg-gray-800"
-                @click="selectSnippetsTitle(title)"
+                class="group relative mb-1 flex cursor-pointer items-center truncate rounded p-1  px-2 transition-colors hover:bg-gray-800"
+                @click="() => selectSnippetsTitle(title)"
               >
                 <span class="truncate group-hover:max-w-[calc(100%-2rem)]">
                   {{ title }}
@@ -128,13 +136,13 @@ function handleDeleteSnippets(category: string, title: string) {
                 <div class="absolute right-1 flex gap-1 opacity-0 group-hover:opacity-100">
                   <div
                     class="cursor-pointer rounded-md bg-gray-500/50 p-1 transition hover:bg-gray-600/50 hover:text-blue-500"
-                    @click.prevent="() => handleEditSnippets(selectedCategory, title)"
+                    @click.stop="() => handleEditSnippets(selectedCategory, title)"
                   >
                     <Pencil class="size-3" />
                   </div>
                   <div
                     class="cursor-pointer rounded-md bg-gray-500/50 p-1 transition hover:bg-gray-600/50 hover:text-red-500"
-                    @click.prevent="() => handleDeleteSnippets(selectedCategory, title)"
+                    @click.stop="() => handleDeleteSnippets(selectedCategory, title)"
                   >
                     <Trash class="size-3" />
                   </div>
