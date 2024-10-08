@@ -13,18 +13,26 @@ import { toast } from 'vue-sonner'
 const snippetsStore = useSnippetsStoreWithOut()
 const { snippets, isSnippetsEditing, editingSnippet } = storeToRefs(snippetsStore)
 
-const categories = ref(Object.keys(snippets.value))
-const selectedCategory = ref(categories.value[0])
+const searchValue = ref('')
+const selectedCategory = ref(snippetsStore.getCategories()[0])
 
-const snippetsTitles = ref(Object.keys(snippets.value[selectedCategory.value] || {}))
+// all snippets titles of selected category
+const snippetsTitles = computed(() => snippetsStore.getSnippetsTitles(selectedCategory.value) || [])
 const selectedSnippetsTitle = ref('')
 
-// 刷新细分类别
-function refreshSnippetsTitles() {
-  snippetsTitles.value = Object.keys(snippets.value[selectedCategory.value] || {})
-}
+// use to shown in snippet titles
+const shownSnippetsTitles = computed(() => {
+  if (searchValue.value) {
+    return snippetsStore.matchSnippetsByTitleAndCategory(
+      searchValue.value,
+      selectedCategory.value,
+    )
+  }
+  return snippetsTitles.value
+})
 
 const selectedSnippet = computed(() => {
+  // handle after deleted
   if (selectedCategory.value && selectedSnippetsTitle.value) {
     return snippets.value[selectedCategory.value][selectedSnippetsTitle.value]
   }
@@ -34,45 +42,31 @@ const selectedSnippet = computed(() => {
 function selectCategory(category: string) {
   selectedCategory.value = category
   selectedSnippetsTitle.value = ''
-  snippetsTitles.value = Object.keys(snippets.value[selectedCategory.value] || {})
 }
 
 function selectSnippetsTitle(title: string) {
   selectedSnippetsTitle.value = title
 }
 
-// 搜索相关
-function handleSearch(searchValue: string) {
-  snippetsTitles.value = snippetsStore.matchSnippetsByTitleAndCategory(
-    searchValue,
-    selectedCategory.value,
-  )
-}
-
 function handleAddSnippets() {
   snippetsStore.startCreatingSnippet()
 }
 
-// 创建完成后更新列表
-function handleEditorClose() {
-  refreshSnippetsTitles()
-}
-
+// click edit button then start editing
 function handleEditSnippets(category: string, title: string) {
   snippetsStore.startUpdatingSnippet({
     category,
     title,
     content: snippets.value[category][title],
   })
-  refreshSnippetsTitles()
 }
 
 function handleDeleteSnippets(category: string, title: string) {
   if (selectedCategory.value === category && selectedSnippetsTitle.value === title) {
     snippetsStore.deleteSnippet(category, title)
-    refreshSnippetsTitles()
-    selectedSnippetsTitle.value = snippetsTitles.value.length > 0 ? snippetsTitles.value[0] : ''
-
+    selectedSnippetsTitle.value = snippetsTitles.value.length > 0
+      ? snippetsTitles.value[0]
+      : ''
     toast('delete success')
   }
 }
@@ -88,7 +82,7 @@ function handleDeleteSnippets(category: string, title: string) {
           <CategoryAddition />
           <ScrollArea class="size-full h-[calc(100%-2rem)] p-2">
             <div
-              v-for="category in categories"
+              v-for="category in snippetsStore.getCategories()"
               :key="category"
               :class="{ 'bg-gray-800': selectedCategory === category }"
               :title="category"
@@ -103,10 +97,10 @@ function handleDeleteSnippets(category: string, title: string) {
 
         <!-- 细分类别 -->
         <div class="category-wrap w-3/5">
-          <Search @search="handleSearch" @add-snippets="handleAddSnippets" />
+          <Search v-model:search-value="searchValue" @add-snippets="handleAddSnippets" />
 
           <ScrollArea class="h-[calc(100%-2rem)] p-2 pb-1">
-            <template v-if="snippetsTitles.length === 0">
+            <template v-if="!snippetsTitles.length && !searchValue">
               <div class="flex-col-center mt-12 gap-2 text-gray-500">
                 <Egg class="size-10" />
                 <p class="text-center">
@@ -116,7 +110,7 @@ function handleDeleteSnippets(category: string, title: string) {
             </template>
             <template v-else>
               <div
-                v-for="title in snippetsTitles"
+                v-for="title in shownSnippetsTitles"
                 :key="title"
                 :class="{ 'bg-gray-800': selectedSnippetsTitle === title }"
                 :title="title"
