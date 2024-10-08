@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import Input from '@/components/ui/input/Input.vue'
 import ScrollArea from '@/components/ui/scroll-area/ScrollArea.vue'
+import { useKeyMaps } from '@/composables/useKeyMaps'
 import { Events } from '@/constants/eventEnums'
-import { WindowLabel } from '@/constants/windowEnums'
 import { useSnippetsStoreWithOut } from '@/store/snippetsStore'
-import { emitEvent, useEvent } from '@/utils/eventHandler'
-import { getWindow } from '@/utils/window'
+import { emitEvent } from '@/utils/eventHandler'
 import { Command, EggIcon } from 'lucide-vue-next'
 import { onMounted, ref, watchEffect } from 'vue'
 
@@ -33,26 +32,27 @@ watchEffect(() => {
   }
 })
 
+function select() {
+  console.log('select', chooseSnippetsIndex.value, foundSnippetsTitles.value[chooseSnippetsIndex.value])
+}
+
 onMounted(async () => {
-  const mainWindow = await getWindow(WindowLabel.MAIN)
-  if (!mainWindow?.isFocused) {
-    return
-  }
-
-  useEvent(Events.CHOOSE_NEXT, () => {
-    if (foundSnippetsTitles.value.length) {
-      chooseSnippetsIndex.value = chooseSnippetsIndex.value < foundSnippetsTitles.value.length - 1
-        ? chooseSnippetsIndex.value + 1
-        : 0
-    }
-  })
-
-  useEvent(Events.CHOOSE_PREV, () => {
-    if (foundSnippetsTitles.value.length) {
-      chooseSnippetsIndex.value = chooseSnippetsIndex.value > 0
-        ? chooseSnippetsIndex.value - 1
-        : foundSnippetsTitles.value.length - 1
-    }
+  useKeyMaps({
+    chooseNext: () => {
+      if (foundSnippetsTitles.value.length) {
+        chooseSnippetsIndex.value = chooseSnippetsIndex.value < foundSnippetsTitles.value.length - 1
+          ? chooseSnippetsIndex.value + 1
+          : 0
+      }
+    },
+    choosePrev: () => {
+      if (foundSnippetsTitles.value.length) {
+        chooseSnippetsIndex.value = chooseSnippetsIndex.value > 0
+          ? chooseSnippetsIndex.value - 1
+          : foundSnippetsTitles.value.length - 1
+      }
+    },
+    select,
   })
 })
 </script>
@@ -88,8 +88,9 @@ onMounted(async () => {
           <div
             v-for="(title, index) in foundSnippetsTitles"
             :key="title"
-            :class="index === chooseSnippetsIndex ? 'bg-gray-300/50' : ''"
             class="mt-1 w-full cursor-pointer truncate rounded-md p-1 px-2 text-lg hover:bg-gray-300/50"
+            @mouseenter="chooseSnippetsIndex = index"
+            @click="select"
           >
             <div class="flex-between">
               <code>
