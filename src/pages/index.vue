@@ -5,8 +5,9 @@ import { useKeyMaps } from '@/composables/useKeyMaps'
 import { Events } from '@/constants/eventEnums'
 import { useSnippetsStoreWithOut } from '@/store/snippetsStore'
 import { emitEvent } from '@/utils/eventHandler'
+import { writeText } from '@tauri-apps/plugin-clipboard-manager'
 import { Command, EggIcon } from 'lucide-vue-next'
-import { onMounted, ref, watchEffect } from 'vue'
+import { ref, watchEffect } from 'vue'
 
 const snippetsStore = useSnippetsStoreWithOut()
 
@@ -24,16 +25,11 @@ watchEffect(() => {
     ? snippetsStore.matchSnippetsTitles(searchValue.value)
     : []
 
-  if (foundSnippetsTitles.value.length) {
-    chooseSnippetsIndex.value = 0
-  }
-  else {
-    chooseSnippetsIndex.value = 0
-  }
+  chooseSnippetsIndex.value = 0
 })
 
-function select() {
-  console.log('select', chooseSnippetsIndex.value, foundSnippetsTitles.value[chooseSnippetsIndex.value])
+async function select() {
+  await writeText(foundSnippetsTitles.value[chooseSnippetsIndex.value])
 }
 
 useKeyMaps({
@@ -86,7 +82,8 @@ useKeyMaps({
           <div
             v-for="(title, index) in foundSnippetsTitles"
             :key="title"
-            class="mt-1 w-full cursor-pointer truncate rounded-md p-1 px-2 text-lg hover:bg-gray-300/50"
+            :class="index === chooseSnippetsIndex ? 'bg-gray-300/50' : ''"
+            class="mt-1 w-full cursor-pointer truncate rounded-md p-1 px-2 text-lg"
             @mouseenter="chooseSnippetsIndex = index"
             @click="select"
           >
