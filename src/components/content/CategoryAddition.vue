@@ -2,14 +2,16 @@
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
+import { useSnippetsStoreWithOut } from '@/store/snippetsStore'
 import { FolderPlus } from 'lucide-vue-next'
 import { ref } from 'vue'
 import { toast } from 'vue-sonner'
 
+const snippetsStore = useSnippetsStoreWithOut()
 const categoryName = ref('')
 
 function handleAddCategory() {
-  console.log('add category')
+  snippetsStore.addCategory(categoryName.value)
   toast('add category success')
 }
 </script>

@@ -55,6 +55,7 @@ const snippetsStore = defineStore('snippets', {
       const res = Object.keys(this.snippets[category]).filter(sub => regex.test(sub))
       return res
     },
+    // snippet curd
     startCreatingSnippet() {
       this.isSnippetsEditing = true
       this.isCreatingSnippet = true
@@ -92,6 +93,14 @@ const snippetsStore = defineStore('snippets', {
     },
     deleteSnippet(category: string, title: string) {
       delete this.snippets[category][title]
+    },
+
+    // category curd
+    addCategory(category: string) {
+      this.snippets[category] = {}
+    },
+    deleteCategory(category: string) {
+      delete this.snippets[category]
     },
   },
 })
