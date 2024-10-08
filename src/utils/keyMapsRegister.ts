@@ -1,5 +1,5 @@
 import type { ShortcutEvent } from '@tauri-apps/plugin-global-shortcut'
-import { keyMaps } from '@/constants/keyMaps'
+import { systemKeyMaps } from '@/constants/keyMaps'
 import { emitEvent } from '@/utils/eventHandler'
 import { register, unregister } from '@tauri-apps/plugin-global-shortcut'
 
@@ -19,7 +19,7 @@ export async function initKeyMaps() {
   }
 
   // 注册快捷键
-  keyMaps.forEach((value, key) => {
+  systemKeyMaps.forEach((value, key) => {
     registerShortcuts(key, () => {
       emitEvent(value)
     })

@@ -2,16 +2,18 @@
 import Input from '@/components/ui/input/Input.vue'
 import ScrollArea from '@/components/ui/scroll-area/ScrollArea.vue'
 import { Events } from '@/constants/eventEnums'
+import { WindowLabel } from '@/constants/windowEnums'
 import { useSnippetsStoreWithOut } from '@/store/snippetsStore'
-import { emitEvent } from '@/utils/eventHandler'
+import { emitEvent, useEvent } from '@/utils/eventHandler'
+import { getWindow } from '@/utils/window'
 import { Command, EggIcon } from 'lucide-vue-next'
-import { ref, watchEffect } from 'vue'
+import { onMounted, ref, watchEffect } from 'vue'
 
 const snippetsStore = useSnippetsStoreWithOut()
 
 const searchValue = ref('')
 
-const chooseSnippetsTitle = ref('')
+const chooseSnippetsIndex = ref(0)
 const foundSnippetsTitles = ref<string[]>([])
 
 function goContent() {
@@ -24,8 +26,34 @@ watchEffect(() => {
     : []
 
   if (foundSnippetsTitles.value.length) {
-    chooseSnippetsTitle.value = foundSnippetsTitles.value[0]
+    chooseSnippetsIndex.value = 0
   }
+  else {
+    chooseSnippetsIndex.value = 0
+  }
+})
+
+onMounted(async () => {
+  const mainWindow = await getWindow(WindowLabel.MAIN)
+  if (!mainWindow?.isFocused) {
+    return
+  }
+
+  useEvent(Events.CHOOSE_NEXT, () => {
+    if (foundSnippetsTitles.value.length) {
+      chooseSnippetsIndex.value = chooseSnippetsIndex.value < foundSnippetsTitles.value.length - 1
+        ? chooseSnippetsIndex.value + 1
+        : 0
+    }
+  })
+
+  useEvent(Events.CHOOSE_PREV, () => {
+    if (foundSnippetsTitles.value.length) {
+      chooseSnippetsIndex.value = chooseSnippetsIndex.value > 0
+        ? chooseSnippetsIndex.value - 1
+        : foundSnippetsTitles.value.length - 1
+    }
+  })
 })
 </script>
 
@@ -60,9 +88,8 @@ watchEffect(() => {
           <div
             v-for="(title, index) in foundSnippetsTitles"
             :key="title"
-            :class="title === chooseSnippetsTitle ? 'bg-gray-300/50' : ''"
+            :class="index === chooseSnippetsIndex ? 'bg-gray-300/50' : ''"
             class="mt-1 w-full cursor-pointer truncate rounded-md p-1 px-2 text-lg hover:bg-gray-300/50"
-            @click="chooseSnippetsTitle = title"
           >
             <div class="flex-between">
               <code>
