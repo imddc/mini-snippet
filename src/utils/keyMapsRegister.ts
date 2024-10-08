@@ -1,11 +1,8 @@
 import type { ShortcutEvent } from '@tauri-apps/plugin-global-shortcut'
-import { Events } from '@/constants/eventEnums'
+import { keyMaps } from '@/constants/keyMaps'
 import { emitEvent } from '@/utils/eventHandler'
-import { register, unregister } from '@tauri-apps/plugin-global-shortcut'
 
-const keyMaps: Record<string, Events> = {
-  'alt+space': Events.TOGGLE_MAIN_WINDOW,
-}
+import { register, unregister } from '@tauri-apps/plugin-global-shortcut'
 
 // 便于处理开发环境下注册快捷键
 async function registerShortcuts(shortcuts: string | string[], callback: (e: ShortcutEvent) => void) {

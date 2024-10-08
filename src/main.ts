@@ -1,7 +1,7 @@
 import { setupStore } from '@/plugins/pinia'
 import { setupSnippetsStore } from '@/store/snippetsStore'
 import { registerEvents } from '@/utils/eventRegister'
-import { initKeyMaps } from '@/utils/keyMaps'
+import { initKeyMaps } from '@/utils/keyMapsRegister'
 import { createApp } from 'vue'
 import App from './App.vue'
 import { setupRouter } from './plugins/router'
