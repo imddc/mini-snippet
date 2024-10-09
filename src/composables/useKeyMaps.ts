@@ -32,7 +32,6 @@ export function useKeyMaps({
     ) {
       choosePrev()
     }
-
     // select
     if (enter.value) {
       select()

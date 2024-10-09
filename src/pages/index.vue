@@ -4,14 +4,15 @@ import ScrollArea from '@/components/ui/scroll-area/ScrollArea.vue'
 import { useKeyMaps } from '@/composables/useKeyMaps'
 import { Events } from '@/constants/eventEnums'
 import { useSnippetsStoreWithOut } from '@/store/snippetsStore'
-import { emitEvent } from '@/utils/eventHandler'
+import { emitEvent, useEvent } from '@/utils/eventHandler'
 import { writeText } from '@tauri-apps/plugin-clipboard-manager'
 import { Command, EggIcon } from 'lucide-vue-next'
-import { ref, watchEffect } from 'vue'
+import { onMounted, ref, useTemplateRef, watchEffect } from 'vue'
 
 const snippetsStore = useSnippetsStoreWithOut()
 
 const searchValue = ref('')
+const searchInputRef = useTemplateRef<InstanceType<typeof Input>>('searchInputRef')
 
 const chooseSnippetsIndex = ref(0)
 const foundSnippetsTitles = ref<string[]>([])
@@ -30,6 +31,8 @@ watchEffect(() => {
 
 async function select() {
   await writeText(foundSnippetsTitles.value[chooseSnippetsIndex.value])
+
+  emitEvent(Events.CLOSE_MAIN_WINDOW)
 }
 
 useKeyMaps({
@@ -49,6 +52,16 @@ useKeyMaps({
   },
   select,
 })
+
+onMounted(() => {
+  if (searchInputRef.value) {
+    searchInputRef.value?.setFocus()
+  }
+
+  useEvent(Events.CLOSE_MAIN_WINDOW, () => {
+    searchValue.value = ''
+  })
+})
 </script>
 
 <template>
@@ -60,6 +73,7 @@ useKeyMaps({
     >
       <div class="flex-between gap-2">
         <Input
+          ref="searchInputRef"
           v-model.trim="searchValue"
           placeholder="input code ..."
           class="h-12 border-none bg-background/50 p-2 text-lg"

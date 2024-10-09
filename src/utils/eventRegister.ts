@@ -26,15 +26,18 @@ export function registerEvents() {
       shadow: false,
     })
 
-    webviewWindow.once('tauri://created', () => {
-      emitEvent(Events.CLOSE_MAIN_WINDOW)
-    })
+    webviewWindow.once('tauri://created', () => { })
   })
 
   // 主窗口
   useEvent(Events.OPEN_MAIN_WINDOW, async () => {
     const mainWindow = await getWindow(WindowLabel.MAIN)
-    mainWindow && mainWindow.show()
+    if (!mainWindow) {
+      return
+    }
+
+    mainWindow.show()
+    mainWindow.setFocus()
     mainWindowStore.isShow = true
   })
 
