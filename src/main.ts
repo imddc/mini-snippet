@@ -11,12 +11,13 @@ import './style/index.css'
 const app = createApp(App)
 setupRouter(app)
 setupStore(app)
-app.mount('#app')
-
-initKeyMaps()
-registerEvents()
 
 // 初始化 tauri store
 initStore()
 // 初始化 snippetsStore
 setupSnippetsStore()
+
+app.mount('#app')
+
+initKeyMaps()
+registerEvents()

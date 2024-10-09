@@ -1,42 +1,29 @@
 <script setup lang="ts">
+import type { CategoryV2 } from '@/types/snippet'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
-import { useSnippetsStoreWithOut } from '@/store/snippetsStore'
 import { ref } from 'vue'
 import { toast } from 'vue-sonner'
 
-const props = defineProps<{
-  category: string
+const { category } = defineProps<{
+  category: CategoryV2 | null
 }>()
 
 const emit = defineEmits<{
   close: []
+  change: [value: CategoryV2]
 }>()
 
-const snippetsStore = useSnippetsStoreWithOut()
+const value = ref(category || { id: '', name: '' })
 
-const value = ref(props.category)
-
-function handleCategory() {
+function change() {
   if (!value.value) {
     toast.error('category name is required')
     return
   }
 
-  if (props.category) {
-    // update
-    snippetsStore.updateCategory(props.category, value.value)
-    toast.success('update category success')
-  }
-
-  else {
-    // add
-    snippetsStore.addCategory(value.value)
-    toast.success('add category success')
-  }
-
-  emit('close')
+  emit('change', value.value)
 }
 </script>
 
@@ -45,15 +32,15 @@ function handleCategory() {
     <DialogTrigger as-child>
       <slot />
     </DialogTrigger>
-    <DialogContent class="sm:max-w-[425px]">
+    <DialogContent aria-describedby="category-edit-dialog-description">
       <DialogHeader>
         <DialogTitle>
-          {{ props.category ? 'update category' : 'add category' }}
+          {{ category ? 'update category' : 'add category' }}
         </DialogTitle>
       </DialogHeader>
 
       <Input
-        v-model.trim="value"
+        v-model.trim="value.name"
         placeholder="category name"
         class="mt-4 ring-1 ring-gray-500"
       />
@@ -62,7 +49,7 @@ function handleCategory() {
         <Button size="sm" variant="outline" @click="$emit('close')">
           cancel
         </Button>
-        <Button size="sm" variant="outline" @click="handleCategory">
+        <Button size="sm" variant="outline" @click="change">
           submit
         </Button>
       </DialogFooter>

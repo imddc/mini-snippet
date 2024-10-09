@@ -5,7 +5,7 @@ import { store } from '@/plugins/pinia'
 import { createRegexNoCase } from '@/utils/core'
 import { useTauriStore } from '@/utils/tauriStore'
 import { defineStore } from 'pinia'
-import { uuid } from 'uuidv4'
+import { v4 } from 'uuid'
 
 interface SnippetStore {
   categories: CategoryV2[]
@@ -14,24 +14,28 @@ interface SnippetStore {
 
 const tauriStore = useTauriStore()
 
-const snippetsStore = defineStore('snippets', {
+const snippetsStore = defineStore('snippetsV2', {
   state: (): SnippetStore => ({
     categories: [],
     snippets: [],
   }),
   actions: {
     async initSnippets() {
-      this.categories = await tauriStore.get('categories') || categoriesV2
-      this.snippets = await tauriStore.get('snippets') || snippetsV2
+      // this.categories = await tauriStore.get(TAURI_STORE_KEYS.CATEGORIES) || categoriesV2
+      // this.snippets = await tauriStore.get(TAURI_STORE_KEYS.SNIPPETS) || snippetsV2
+      this.categories = categoriesV2
+      this.snippets = snippetsV2
     },
-
     // category curd
+    getCategory(categoryId: string): CategoryV2 | undefined {
+      return this.categories.find(category => category.id === categoryId)
+    },
     getCategories() {
       return this.categories
     },
     async addCategory(categoryName: string) {
       this.categories.push({
-        id: uuid(),
+        id: v4(),
         name: categoryName,
       })
       await tauriStore.set(TAURI_STORE_KEYS.CATEGORIES, this.categories)
@@ -66,7 +70,7 @@ const snippetsStore = defineStore('snippets', {
     async addSnippet(snippet: Omit<SnippetV2, 'id'>) {
       this.snippets.push({
         ...snippet,
-        id: uuid(),
+        id: v4(),
       })
       await tauriStore.set(TAURI_STORE_KEYS.SNIPPETS, this.snippets)
     },
@@ -91,7 +95,7 @@ export function useSnippetsStoreWithOut() {
   return snippetsStore(store)
 }
 
-export function setupSnippetsStore() {
+export async function setupSnippetsStore() {
   const snippetsStore = useSnippetsStoreWithOut()
-  snippetsStore.initSnippets()
+  await snippetsStore.initSnippets()
 }

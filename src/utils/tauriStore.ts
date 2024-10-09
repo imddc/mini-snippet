@@ -8,7 +8,6 @@ export async function initStore() {
     return store
   }
   return await createStore(TAURI_STORE_NAME, {
-    autoSave: true,
   })
 }
 
