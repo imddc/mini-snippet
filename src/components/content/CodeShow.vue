@@ -1,10 +1,11 @@
 <script setup lang="ts">
+import type { SnippetV2 } from '@/types/snippet'
 import hljs from 'highlight.js'
 import { Egg } from 'lucide-vue-next'
 import 'highlight.js/styles/github-dark.min.css'
 
 defineProps<{
-  selectedSnippet?: string
+  selectedSnippet: SnippetV2 | null
 }>()
 
 function highlightCode(code: string) {
@@ -17,7 +18,10 @@ function highlightCode(code: string) {
     <template v-if="selectedSnippet">
       <div class="h-full min-w-0 flex-1 grow-0 overflow-auto rounded-lg bg-gray-900/90 p-4 shadow-md">
         <pre class="text-white">
-          <code class="text-ellipsis text-sm" v-html="highlightCode(selectedSnippet)" />
+          <code
+            class="text-ellipsis text-sm"
+            v-html="highlightCode(selectedSnippet.content)"
+          />
         </pre>
       </div>
     </template>

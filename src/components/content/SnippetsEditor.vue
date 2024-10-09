@@ -1,74 +1,62 @@
 <script setup lang="ts">
-import type { SnippetEditor } from '@/types/snippet'
+import type { SnippetV2 } from '@/types/snippet'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
-import { useSnippetsStoreWithOut } from '@/store/snippetsStore'
-import { storeToRefs } from 'pinia'
-import { onUpdated, ref } from 'vue'
+import { useSnippetsStoreWithOut } from '@/store/snippetsStoreV2'
+import { ref } from 'vue'
 import { toast } from 'vue-sonner'
 
+type SnippetV2WithoutId = Omit<SnippetV2, 'id'>
+
 const props = withDefaults(defineProps<{
-  editingSnippet?: SnippetEditor
+  editingSnippet: SnippetV2 | null
 }>(), {})
 
 const emit = defineEmits<{
-  (e: 'close'): void
+  close: []
+  change: [SnippetV2WithoutId]
 }>()
 
 const snippetsStore = useSnippetsStoreWithOut()
-const { isCreatingSnippet } = storeToRefs(snippetsStore)
 
-const snippetTemplate = {
-  category: '',
+const snippet = ref<SnippetV2WithoutId>(props.editingSnippet || {
+  categoryId: '',
   title: '',
   content: '',
-}
+})
 
-const snippet = ref(props.editingSnippet || snippetTemplate)
-
-function saveSnippet() {
-  if (snippet.value.category && snippet.value.title && snippet.value.content) {
-    if (isCreatingSnippet.value) {
-      snippetsStore.addSnippet(snippet.value)
-      snippetsStore.cancelCreatingSnippet()
-    }
-    else {
-      snippetsStore.updateSnippet(snippet.value)
-      snippetsStore.cancelUpdatingSnippet()
-    }
-    emit('close')
+function change() {
+  if (snippet.value.categoryId && snippet.value.title && snippet.value.content) {
+    emit('change', snippet.value)
   }
   else {
     toast.error('Please fill in all fields')
   }
 }
-
-function cancelEdit() {
-  emit('close')
-}
-
-onUpdated(() => {
-  if (props.editingSnippet) {
-    snippet.value = props.editingSnippet || { ...snippetTemplate }
-  }
-})
 </script>
 
 <template>
   <div class="flex h-full flex-col rounded-lg bg-gray-900/90 p-4">
+    <div class="mb-4 text-lg font-bold">
+      {{ props.editingSnippet ? 'update' : 'add' }}
+    </div>
     <div class="mb-4 grid grid-cols-2 gap-4">
       <div>
         <label for="category" class="mb-2 block text-sm font-medium text-gray-400">category</label>
-        <Select v-model="snippet.category">
+        <Select v-model="snippet.categoryId">
           <SelectTrigger class="w-full">
             <SelectValue placeholder="Select a category" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem v-for="category in snippetsStore.getCategories()" :key="category" :value="category">
-              {{ category }}
+            <SelectItem
+              v-for="category in snippetsStore.getCategories()"
+              :key="category.id"
+              :value="category.id"
+            >
+              {{ category.name }}
             </SelectItem>
           </SelectContent>
         </Select>
@@ -90,11 +78,11 @@ onUpdated(() => {
       </ScrollArea>
     </div>
     <div class="flex justify-end space-x-4">
-      <Button variant="outline" size="sm" @click="cancelEdit">
+      <Button variant="outline" size="sm" @click="$emit('close')">
         Cancel
       </Button>
-      <Button variant="outline" size="sm" @click="saveSnippet">
-        {{ isCreatingSnippet ? 'Create' : 'Update' }}
+      <Button variant="outline" size="sm" @click="change">
+        Save
       </Button>
     </div>
   </div>

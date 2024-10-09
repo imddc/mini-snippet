@@ -9,7 +9,7 @@ import ScrollArea from '@/components/ui/scroll-area/ScrollArea.vue'
 import { useSnippetsStoreWithOut } from '@/store/snippetsStoreV2'
 import { Egg, Folder, FolderPlus } from 'lucide-vue-next'
 import { storeToRefs } from 'pinia'
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { toast } from 'vue-sonner'
 
 const snippetsStore = useSnippetsStoreWithOut()
@@ -73,6 +73,9 @@ function handleCategoryChange(value: CategoryV2 | null) {
   dialogCategory.value = null
 }
 
+const isEditorOpen = ref(false)
+const editorSnippet = ref<SnippetV2 | null>(null)
+
 function selectSnippet(snippetId: string) {
   const snippet = snippetsStore.getSnippet(snippetId)
   if (snippet) {
@@ -80,29 +83,58 @@ function selectSnippet(snippetId: string) {
   }
 }
 
-const isEditorOpen = ref(false)
-function openSnippetAddEditor() {
-  isEditorOpen.value = true
+function createSnippet() {
+  isEditorOpen.value = false
+  setTimeout(() => {
+    editorSnippet.value = null
+    isEditorOpen.value = true
+  })
 }
 
-// click edit button then start editing
-function openSnippetEditEditor(snippetId: string) {
-  isEditorOpen.value = true
+function updateSnippet(snippetId: string) {
   const snippet = snippetsStore.getSnippet(snippetId)
   if (snippet) {
-    selectedSnippet.value = snippet
+    isEditorOpen.value = false
+    setTimeout(() => {
+      editorSnippet.value = { ...snippet }
+      isEditorOpen.value = true
+    })
   }
-}
-
-function closeEditor() {
-  isEditorOpen.value = false
 }
 
 function deleteSnippet(snippetId: string) {
   snippetsStore.deleteSnippet(snippetId)
-
   toast('delete success')
 }
+
+function handleSnippetChange(snippet: Omit<SnippetV2, 'id'>) {
+  if (!snippet) {
+    return
+  }
+  if (editorSnippet.value) {
+    snippetsStore.updateSnippet({
+      ...snippet,
+      id: editorSnippet.value.id,
+    })
+    toast('update success')
+  }
+  else {
+    snippetsStore.addSnippet(snippet)
+    toast('add success')
+  }
+
+  isEditorOpen.value = false
+  editorSnippet.value = null
+}
+
+watch(
+  () => selectedSnippet.value,
+  (value) => {
+    if (value) {
+      isEditorOpen.value = false
+    }
+  },
+)
 </script>
 
 <template>
@@ -151,7 +183,7 @@ function deleteSnippet(snippetId: string) {
 
         <!-- 细分类别 -->
         <div class="category-wrap w-3/5">
-          <Search v-model:search-value="searchValue" @add-snippets="openSnippetAddEditor" />
+          <Search v-model:search-value="searchValue" @add-snippets="createSnippet" />
 
           <ScrollArea class="h-[calc(100%-2rem)] p-2 pb-1">
             <template v-if="!snippets.length && !searchValue">
@@ -179,8 +211,8 @@ function deleteSnippet(snippetId: string) {
                   <Actions
                     :edit="true"
                     :delete="true"
-                    @edit="openSnippetEditEditor(snippet.id)"
-                    @delete="deleteSnippet(snippet.id)"
+                    @edit="() => updateSnippet(snippet.id)"
+                    @delete="() => deleteSnippet(snippet.id)"
                   />
                 </div>
               </div>
@@ -192,11 +224,14 @@ function deleteSnippet(snippetId: string) {
       <!-- 代码区域 -->
       <div class="h-full flex-1 overflow-hidden">
         <template v-if="isEditorOpen">
-          <!-- <SnippetsEditor :editing-snippet="selectedSnippet" @close="handleEditorClose" /> -->
+          <SnippetsEditor
+            :editing-snippet="editorSnippet"
+            @close="isEditorOpen = false"
+            @change="handleSnippetChange"
+          />
         </template>
-
         <template v-else>
-          <CodeShow :selected-snippet="selectedSnippet?.content" />
+          <CodeShow :selected-snippet="selectedSnippet" />
         </template>
       </div>
     </div>

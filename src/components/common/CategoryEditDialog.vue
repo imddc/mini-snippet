@@ -29,9 +29,6 @@ function change() {
 
 <template>
   <Dialog open>
-    <DialogTrigger as-child>
-      <slot />
-    </DialogTrigger>
     <DialogContent aria-describedby="category-edit-dialog-description">
       <DialogHeader>
         <DialogTitle>
