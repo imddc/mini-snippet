@@ -3,7 +3,6 @@ import { TAURI_STORE_NAME } from '@/constants/tauri'
 import { createStore } from '@tauri-apps/plugin-store'
 
 const store: Store | null = null
-
 export async function initStore() {
   if (store) {
     return store
@@ -13,37 +12,47 @@ export async function initStore() {
   })
 }
 
-export async function set(key: string, value: any) {
-  if (!store) {
-    throw new Error('Store not initialized')
+export function useTauriStore() {
+  async function set(key: string, value: any) {
+    if (!store) {
+      throw new Error('Store not initialized')
+    }
+    await store.set(key, value)
   }
-  await store.set(key, value)
-}
 
-export async function get<T>(key: string) {
-  if (!store) {
-    throw new Error('Store not initialized')
+  async function get<T>(key: string) {
+    if (!store) {
+      throw new Error('Store not initialized')
+    }
+    return await store.get<T>(key)
   }
-  return await store.get<T>(key)
-}
 
-export async function save() {
-  if (!store) {
-    throw new Error('Store not initialized')
+  async function save() {
+    if (!store) {
+      throw new Error('Store not initialized')
+    }
+    await store.save()
   }
-  await store.save()
-}
 
-export async function remove(key: string) {
-  if (!store) {
-    throw new Error('Store not initialized')
+  async function remove(key: string) {
+    if (!store) {
+      throw new Error('Store not initialized')
+    }
+    await store.delete(key)
   }
-  await store.delete(key)
-}
 
-export async function clear() {
-  if (!store) {
-    throw new Error('Store not initialized')
+  async function clear() {
+    if (!store) {
+      throw new Error('Store not initialized')
+    }
+    await store.clear()
   }
-  await store.clear()
+
+  return {
+    set,
+    get,
+    save,
+    remove,
+    clear,
+  }
 }

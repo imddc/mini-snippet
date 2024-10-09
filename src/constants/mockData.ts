@@ -1,4 +1,4 @@
-import type { Snippet } from '@/types/snippet'
+import type { CategoryV2, Snippet, SnippetV2 } from '@/types/snippet'
 
 // 模拟数据
 export const snippets: Snippet = {
@@ -6,44 +6,6 @@ export const snippets: Snippet = {
     // 给我十五条空的数据 key 不为空
     template1: 'template1 this is a mock data',
     template2: 'template2 this is a mock data',
-    template3: 'template3 this is a mock data',
-    template4: 'template4 this is a mock data',
-    template5: 'template5 this is a mock data',
-    template6: 'template6 this is a mock data',
-    template7: 'template7 this is a mock data',
-    template8: 'template8 this is a mock data',
-    template9: 'template9 this is a mock data',
-    template12342134: 'template10 this is a mock data',
-    template11template11: 'template11 this is a mock data',
-    template12template12: 'template12 this is a mock data',
-    template13template13: 'template13 this is a mock data',
-    template14template14: 'template14 this is a mock data',
-    template15template15: 'template15 this is a mock data',
-  },
-  js: {
-    debounce: `function debounce(func, wait) {
-  let timeout;
-  return function executedFunction(...args) {
-    const later = () => {
-      clearTimeout(timeout);
-      func(...args);
-    };
-      clearTimeout(timeout);
-      func(...args);
-    };
-    timeout = setTimeout(later, wait);
-  };
-};`,
-    throttle: `function throttle(func, limit) {
-  let inThrottle;
-  return function(...args) {
-    if (!inThrottle) {
-      func.apply(this, args);
-      inThrottle = true;
-      setTimeout(() => inThrottle = false, limit);
-    }
-  }
-}`,
   },
   ts: {
     debounce: `function debounce<F extends (...args: any[]) => any>(func: F, wait: number): (...args: Parameters<F>) => void {
@@ -70,15 +32,41 @@ export const snippets: Snippet = {
       return <div>My Component</div>;
     }`,
   },
-  vue1234213421342134123421342134: {},
-  vue: {},
-  css: {},
-  html: {},
-  http: {},
-  javascript: {},
-  typescript: {},
-  docker: {},
-  git: {},
-  linux: {},
   macos: {},
 }
+
+export const categoriesV2: CategoryV2[] = [
+  {
+    id: '1',
+    name: 'js',
+  },
+  {
+    id: '2',
+    name: 'ts',
+  },
+  {
+    id: '3',
+    name: 'react',
+  },
+]
+
+export const snippetsV2: SnippetV2[] = [
+  {
+    id: '1',
+    title: 'debounce',
+    content: 'function debounce(func, wait) { ... }',
+    categoryId: '1',
+  },
+  {
+    id: '2',
+    title: 'useEffect',
+    content: 'function useEffect(func, []) { ... }',
+    categoryId: '2',
+  },
+  {
+    id: '3',
+    title: 'useState',
+    content: 'function useState(initialState) { ... }',
+    categoryId: '3',
+  },
+]
