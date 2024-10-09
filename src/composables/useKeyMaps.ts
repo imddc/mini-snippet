@@ -5,14 +5,16 @@ interface KeyMaps {
   chooseNext: () => void
   choosePrev: () => void
   select: () => void
+  quit: () => void
 }
 
-const { control, n, p, j, k, arrowUp, arrowDown, enter } = useMagicKeys()
+const { control, n, p, j, k, arrowUp, arrowDown, enter, escape } = useMagicKeys()
 
 export function useKeyMaps({
   chooseNext,
   choosePrev,
   select,
+  quit,
 }: KeyMaps) {
   watchEffect(() => {
     // choose next
@@ -35,6 +37,11 @@ export function useKeyMaps({
     // select
     if (enter.value) {
       select()
+    }
+
+    // quit
+    if (escape.value) {
+      quit()
     }
   })
 }

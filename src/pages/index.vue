@@ -31,7 +31,10 @@ watchEffect(() => {
 
 async function select() {
   await writeText(foundSnippetsTitles.value[chooseSnippetsIndex.value])
+  quit()
+}
 
+function quit() {
   emitEvent(Events.CLOSE_MAIN_WINDOW)
 }
 
@@ -51,6 +54,7 @@ useKeyMaps({
     }
   },
   select,
+  quit,
 })
 
 onMounted(() => {
