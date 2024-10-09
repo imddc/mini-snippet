@@ -1,13 +1,14 @@
 import type { Store } from '@tauri-apps/plugin-store'
+import { TAURI_STORE_NAME } from '@/constants/tauri'
 import { createStore } from '@tauri-apps/plugin-store'
 
 const store: Store | null = null
 
-export async function initStore(name: string) {
+export async function initStore() {
   if (store) {
     return store
   }
-  return await createStore(name, {
+  return await createStore(TAURI_STORE_NAME, {
     autoSave: true,
   })
 }
