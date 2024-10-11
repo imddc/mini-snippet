@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { SnippetV2 } from '@/types/snippet'
 import { useSettingStore } from '@/store/settingStore'
+import { useSnippetsStore } from '@/store/snippetsStoreV2'
 import { Egg } from 'lucide-vue-next'
 import { codeToHtml } from 'shiki'
 import { ref, watchEffect } from 'vue'
@@ -10,14 +11,16 @@ const props = defineProps<{
 }>()
 
 const settingStore = useSettingStore()
+const snippetStore = useSnippetsStore()
 
 const codeHTML = ref('')
 const loading = ref(false)
 
-async function highlightCode(code: string) {
+async function highlightCode(snippet: SnippetV2) {
   loading.value = true
-  const res = await codeToHtml(code, {
-    lang: 'javascript',
+  const category = snippetStore.getCategories().find(c => c.id === snippet.categoryId)!
+  const res = await codeToHtml(snippet.content, {
+    lang: category.lang,
     theme: settingStore.getCodeTheme(),
   })
 
@@ -28,7 +31,7 @@ async function highlightCode(code: string) {
 
 watchEffect(() => {
   if (props.selectedSnippet) {
-    highlightCode(props.selectedSnippet.content)
+    highlightCode(props.selectedSnippet)
   }
 })
 </script>

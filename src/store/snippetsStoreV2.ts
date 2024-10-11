@@ -1,4 +1,5 @@
 import type { CategoryV2, SnippetV2 } from '@/types/snippet'
+import type { BundledLanguage } from 'shiki'
 import { categoriesV2, snippetsV2 } from '@/constants/mockData'
 import { TAURI_STORE_KEYS } from '@/constants/tauri'
 import { store } from '@/plugins/pinia'
@@ -14,7 +15,7 @@ interface SnippetStore {
 
 const tauriStore = useTauriStore()
 
-const snippetsStore = defineStore('snippetsV2', {
+export const useSnippetsStore = defineStore('snippetsV2', {
   state: (): SnippetStore => ({
     categories: [],
     snippets: [],
@@ -32,10 +33,11 @@ const snippetsStore = defineStore('snippetsV2', {
     getCategories() {
       return this.categories
     },
-    async addCategory(categoryName: string) {
+    async addCategory(categoryName: string, lang: BundledLanguage) {
       this.categories.push({
         id: v4(),
         name: categoryName,
+        lang,
       })
       await tauriStore.set(TAURI_STORE_KEYS.CATEGORIES, this.categories)
     },
@@ -93,7 +95,7 @@ const snippetsStore = defineStore('snippetsV2', {
 })
 
 export function useSnippetsStoreWithOut() {
-  return snippetsStore(store)
+  return useSnippetsStore(store)
 }
 
 export async function setupSnippetsStore() {

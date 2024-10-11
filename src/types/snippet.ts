@@ -1,3 +1,5 @@
+import type { BundledLanguage } from 'shiki'
+
 export interface Snippet {
   [key: string]: Category
 }
@@ -15,6 +17,7 @@ export interface SnippetEditor {
 export interface CategoryV2 {
   id: string
   name: string
+  lang: BundledLanguage
 }
 
 export interface SnippetV2 {
