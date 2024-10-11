@@ -42,6 +42,7 @@ function change() {
         v-model.trim="value.name"
         placeholder="category name"
         class="mt-4 ring-1 ring-gray-500"
+        maxlength="20"
       />
       <DialogFooter>
         <Button size="sm" variant="outline" @click="$emit('close')">
