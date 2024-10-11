@@ -22,9 +22,9 @@ export const useSnippetsStore = defineStore('snippetsV2', {
   }),
   actions: {
     async initSnippets() {
-      const store = await tauriStore.initStore()
-      this.categories = await store.get(TAURI_STORE_KEYS.CATEGORIES) || categoriesV2
-      this.snippets = await store.get(TAURI_STORE_KEYS.SNIPPETS) || snippetsV2
+      const store = tauriStore.getStore()
+      this.categories = await store?.get(TAURI_STORE_KEYS.CATEGORIES) || categoriesV2
+      this.snippets = await store?.get(TAURI_STORE_KEYS.SNIPPETS) || snippetsV2
     },
     // category curd
     getCategory(categoryId: string): CategoryV2 | undefined {

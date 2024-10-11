@@ -7,10 +7,13 @@ let store: Store | null = null
 export function useTauriStore() {
   async function initStore() {
     if (store) {
-      return store
+      return
     }
     store = await createStore(TAURI_STORE_NAME, {
     })
+  }
+
+  function getStore() {
     return store
   }
 
@@ -51,6 +54,7 @@ export function useTauriStore() {
 
   return {
     initStore,
+    getStore,
     set,
     get,
     save,
