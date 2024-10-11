@@ -25,17 +25,6 @@
     "clipboard-manager:allow-write-text",
     "clipboard-manager:allow-write-html",
     "clipboard-manager:allow-clear",
-    "store:allow-set",
-    "store:allow-get",
-    "store:allow-delete",
-    "store:allow-clear",
-    "store:allow-create-store",
-    "store:allow-save",
-    "store:allow-entries",
-    "store:allow-reset",
-    "store:allow-keys",
-    "store:allow-has",
-    "store:allow-values",
-    "store:allow-length"
+    "store:default"
   ]
 }

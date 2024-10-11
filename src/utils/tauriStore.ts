@@ -2,16 +2,18 @@ import type { Store } from '@tauri-apps/plugin-store'
 import { TAURI_STORE_NAME } from '@/constants/tauri'
 import { createStore } from '@tauri-apps/plugin-store'
 
-const store: Store | null = null
-export async function initStore() {
-  if (store) {
-    return store
-  }
-  return await createStore(TAURI_STORE_NAME, {
-  })
-}
+let store: Store | null = null
 
 export function useTauriStore() {
+  async function initStore() {
+    if (store) {
+      return store
+    }
+    store = await createStore(TAURI_STORE_NAME, {
+    })
+    return store
+  }
+
   async function set(key: string, value: any) {
     if (!store) {
       throw new Error('Store not initialized')
@@ -48,6 +50,7 @@ export function useTauriStore() {
   }
 
   return {
+    initStore,
     set,
     get,
     save,
