@@ -6,9 +6,7 @@ import { Toaster } from '@/components/ui/sonner'
   <div>
     <RouterView v-slot="{ Component }">
       <KeepAlive>
-        <Transition name="fade">
-          <component :is="Component" />
-        </Transition>
+        <component :is="Component" />
       </KeepAlive>
     </RouterView>
 
