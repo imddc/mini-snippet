@@ -13,9 +13,7 @@ export function registerEvents() {
   useEvent(Events.OPEN_CONTENT_WINDOW, async () => {
     const webviewWindow = new WebviewWindow(WindowLabel.CONTENT, {
       url: 'content',
-      x: 0,
-      y: 0,
-      width: 800,
+      width: 1000,
       height: 600,
       closable: true,
       decorations: false,
