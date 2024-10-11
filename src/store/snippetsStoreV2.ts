@@ -62,9 +62,11 @@ const snippetsStore = defineStore('snippetsV2', {
       return this.snippets.filter(snippet => snippet.categoryId === categoryId)
     },
     // 根据 categoryName 匹配 snippets
-    matchSnippets(categoryName: string) {
-      const regex = createRegexNoCase(categoryName)
-      return this.snippets.filter(snippet => regex.test(snippet.categoryId))
+    matchSnippets(value: string, categoryId?: string) {
+      const regex = createRegexNoCase(value)
+      return categoryId
+        ? this.snippets.filter(snippet => snippet.categoryId === categoryId && regex.test(snippet.title))
+        : this.snippets.filter(snippet => regex.test(snippet.title))
     },
     async addSnippet(snippet: Omit<SnippetV2, 'id'>) {
       this.snippets.push({
