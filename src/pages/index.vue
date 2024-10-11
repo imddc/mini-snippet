@@ -1,9 +1,10 @@
 <script setup lang="ts">
+import type { SnippetV2 } from '@/types/snippet'
 import Input from '@/components/ui/input/Input.vue'
 import ScrollArea from '@/components/ui/scroll-area/ScrollArea.vue'
 import { useKeyMaps } from '@/composables/useKeyMaps'
 import { Events } from '@/constants/eventEnums'
-import { useSnippetsStoreWithOut } from '@/store/snippetsStore'
+import { useSnippetsStoreWithOut } from '@/store/snippetsStoreV2'
 import { emitEvent, useEvent } from '@/utils/eventHandler'
 import { writeText } from '@tauri-apps/plugin-clipboard-manager'
 import { Command, EggIcon } from 'lucide-vue-next'
@@ -15,22 +16,22 @@ const searchValue = ref('')
 const searchInputRef = useTemplateRef<InstanceType<typeof Input>>('searchInputRef')
 
 const chooseSnippetsIndex = ref(0)
-const foundSnippetsTitles = ref<string[]>([])
+const foundSnippets = ref<SnippetV2[]>([])
 
 function goContent() {
   emitEvent(Events.OPEN_CONTENT_WINDOW)
 }
 
 watchEffect(() => {
-  foundSnippetsTitles.value = searchValue.value
-    ? snippetsStore.matchSnippetsTitles(searchValue.value)
+  foundSnippets.value = searchValue.value
+    ? snippetsStore.matchSnippets(searchValue.value)
     : []
 
   chooseSnippetsIndex.value = 0
 })
 
 async function select() {
-  await writeText(foundSnippetsTitles.value[chooseSnippetsIndex.value])
+  await writeText(foundSnippets.value[chooseSnippetsIndex.value].content)
   quit()
 }
 
@@ -40,17 +41,17 @@ function quit() {
 
 useKeyMaps({
   chooseNext: () => {
-    if (foundSnippetsTitles.value.length) {
-      chooseSnippetsIndex.value = chooseSnippetsIndex.value < foundSnippetsTitles.value.length - 1
+    if (foundSnippets.value.length) {
+      chooseSnippetsIndex.value = chooseSnippetsIndex.value < foundSnippets.value.length - 1
         ? chooseSnippetsIndex.value + 1
         : 0
     }
   },
   choosePrev: () => {
-    if (foundSnippetsTitles.value.length) {
+    if (foundSnippets.value.length) {
       chooseSnippetsIndex.value = chooseSnippetsIndex.value > 0
         ? chooseSnippetsIndex.value - 1
-        : foundSnippetsTitles.value.length - 1
+        : foundSnippets.value.length - 1
     }
   },
   select,
@@ -93,13 +94,13 @@ onMounted(() => {
 
       <!-- 下拉列表 -->
       <div
-        v-if="foundSnippetsTitles.length"
+        v-if="foundSnippets.length"
         class="text-slate-300 backdrop-blur"
       >
         <ScrollArea class="h-[400px] pr-3">
           <div
-            v-for="(title, index) in foundSnippetsTitles"
-            :key="title"
+            v-for="(snippet, index) in foundSnippets"
+            :key="snippet.id"
             :class="index === chooseSnippetsIndex ? 'bg-gray-300/50' : ''"
             class="mt-1 w-full cursor-pointer truncate rounded-md p-1 px-2 text-lg"
             @mouseenter="chooseSnippetsIndex = index"
@@ -107,7 +108,7 @@ onMounted(() => {
           >
             <div class="flex-between">
               <code>
-                {{ title }}
+                {{ snippet.title }}
               </code>
               <div class="flex-center w-10 shrink-0 gap-1">
                 <Command class="size-4" />
