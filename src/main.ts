@@ -1,5 +1,5 @@
 import { setupStore } from '@/plugins/pinia'
-import { setupSnippetsStore } from '@/store/snippetsStore'
+import { setupSnippetsStore } from '@/store/snippetsStoreV2'
 import { registerEvents } from '@/utils/eventRegister'
 import { initKeyMaps } from '@/utils/keyMapsRegister'
 import { initStore } from '@/utils/tauriStore'
