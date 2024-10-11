@@ -25,7 +25,8 @@ const selectedSnippet = ref<SnippetV2 | null>(null)
 const shownSnippets = computed(() => {
   if (searchValue.value) {
     return snippetsStore.matchSnippets(
-      selectedCategory.value.name,
+      searchValue.value,
+      selectedCategory.value.id,
     )
   }
   return snippetsStore.getSnippets(selectedCategory.value.id)
