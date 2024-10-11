@@ -33,18 +33,17 @@ export const useSnippetsStore = defineStore('snippetsV2', {
     getCategories() {
       return this.categories
     },
-    async addCategory(categoryName: string, lang: BundledLanguage) {
+    async addCategory(category: CategoryV2) {
       this.categories.push({
+        ...category,
         id: v4(),
-        name: categoryName,
-        lang,
       })
       await tauriStore.set(TAURI_STORE_KEYS.CATEGORIES, this.categories)
     },
-    async updateCategory(categoryId: string, newCategoryName: string) {
+    async updateCategory(categoryId: string, newCategory: CategoryV2) {
       const index = this.categories.findIndex(category => category.id === categoryId)
       if (index !== -1) {
-        this.categories[index].name = newCategoryName
+        this.categories[index] = { ...newCategory, id: categoryId }
       }
       await tauriStore.set(TAURI_STORE_KEYS.CATEGORIES, this.categories)
     },

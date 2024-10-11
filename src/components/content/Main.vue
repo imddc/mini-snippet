@@ -63,10 +63,10 @@ function deleteCategory(categoryId: string) {
 function handleCategoryChange(value: CategoryV2 | null) {
   if (value) {
     if (dialogCategory.value) {
-      snippetsStore.updateCategory(dialogCategory.value.id, value.name)
+      snippetsStore.updateCategory(dialogCategory.value.id, value)
     }
     else {
-      snippetsStore.addCategory(value.name)
+      snippetsStore.addCategory(value)
     }
   }
 
