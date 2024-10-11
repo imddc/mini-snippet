@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { SnippetV2 } from '@/types/snippet'
+import { useSettingStore } from '@/store/settingStore'
 import { Egg } from 'lucide-vue-next'
 import { codeToHtml } from 'shiki'
 import { ref, watchEffect } from 'vue'
@@ -8,13 +9,16 @@ const props = defineProps<{
   selectedSnippet: SnippetV2 | null
 }>()
 
+const settingStore = useSettingStore()
+
 const codeHTML = ref('')
 const loading = ref(false)
+
 async function highlightCode(code: string) {
   loading.value = true
   const res = await codeToHtml(code, {
     lang: 'javascript',
-    theme: 'github-dark',
+    theme: settingStore.getCodeTheme(),
   })
 
   loading.value = false
