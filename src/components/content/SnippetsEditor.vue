@@ -48,7 +48,7 @@ function change() {
         <label for="category" class="mb-2 block text-sm font-medium text-gray-400">category</label>
         <Select v-model="snippet.categoryId">
           <SelectTrigger class="w-full">
-            <SelectValue placeholder="Select a category" />
+            <SelectValue placeholder="Select a category" class="placeholder:text-gray-400" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem
@@ -63,17 +63,18 @@ function change() {
       </div>
       <div>
         <label for="title" class="mb-2 block text-sm font-medium text-gray-400">title</label>
-        <Input id="title" v-model="snippet.title" placeholder="Enter snippet title" class="h-8 w-full" />
+        <Input id="title" v-model="snippet.title" placeholder="Enter snippet title" class="h-8 w-full placeholder:text-gray-400" />
       </div>
     </div>
     <div class="mb-4 grow">
       <label for="content" class="mb-2 block text-sm font-medium text-gray-400">content</label>
-      <ScrollArea class="h-[calc(100vh-300px)]">
+      <ScrollArea class="h-[calc()]">
         <Textarea
           id="content"
           v-model="snippet.content"
           placeholder="enter your code snippet here"
-          class="size-full min-h-[200px] resize-none font-mono"
+          class="size-full min-h-[200px] resize-none font-mono placeholder:text-gray-400"
+          :rows="13"
         />
       </ScrollArea>
     </div>
