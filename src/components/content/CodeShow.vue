@@ -42,7 +42,7 @@ watchEffect(() => {
       <div class="h-full min-w-0 flex-1 grow-0 overflow-auto rounded-lg bg-gray-900/90 p-4 shadow-md">
         <div
           v-if="!loading"
-          class="text-ellipsis text-sm"
+          class="!select-text text-ellipsis text-sm"
           v-html="codeHTML"
         />
       </div>
