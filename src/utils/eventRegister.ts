@@ -12,8 +12,8 @@ const windowStore = useWindowStoreWithOut()
 export async function registerEvents() {
   const mainWindow = await getWindow(WindowLabel.MAIN)
 
-  mainWindow?.onFocusChanged((focus) => {
-    if (!focus) {
+  mainWindow?.onFocusChanged(({ payload }) => {
+    if (!payload) {
       setTimeout(() => {
         emitEvent(Events.CLOSE_MAIN_WINDOW)
       })
