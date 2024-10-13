@@ -4,13 +4,13 @@ import Input from '@/components/ui/input/Input.vue'
 import ScrollArea from '@/components/ui/scroll-area/ScrollArea.vue'
 import { useKeyMaps } from '@/composables/useKeyMaps'
 import { Events } from '@/constants/eventEnums'
-import { useSnippetsStoreWithOut } from '@/store/snippetsStoreV2'
+import { useSnippetsStore } from '@/store/snippetsStoreV2'
 import { emitEvent, useEvent } from '@/utils/eventHandler'
 import { writeText } from '@tauri-apps/plugin-clipboard-manager'
 import { Command, EggIcon } from 'lucide-vue-next'
 import { onMounted, ref, useTemplateRef, watchEffect } from 'vue'
 
-const snippetsStore = useSnippetsStoreWithOut()
+const snippetsStore = useSnippetsStore()
 
 const searchValue = ref('')
 const searchInputRef = useTemplateRef<InstanceType<typeof Input>>('searchInputRef')
@@ -58,6 +58,10 @@ useKeyMaps({
   quit,
 })
 
+//
+const listRef = useTemplateRef('listRef')
+const getCategoryName = (id: string) => snippetsStore.getCategory(id)
+
 onMounted(() => {
   if (searchInputRef.value) {
     searchInputRef.value?.setFocus()
@@ -95,9 +99,13 @@ onMounted(() => {
       <!-- 下拉列表 -->
       <div
         v-if="foundSnippets.length"
+        ref="listRef"
         class="text-slate-300 backdrop-blur"
       >
-        <ScrollArea class="h-[400px] pr-3">
+        <ScrollArea
+          class="pr-3"
+          :style="{ height: `${60 * foundSnippets.length}px` }"
+        >
           <div
             v-for="(snippet, index) in foundSnippets"
             :key="snippet.id"
@@ -107,13 +115,22 @@ onMounted(() => {
             @click="select"
           >
             <div class="flex-between">
-              <code>
+              <div class="truncate text-lg">
                 {{ snippet.title }}
-              </code>
+              </div>
               <div class="flex-center w-10 shrink-0 gap-1">
                 <Command class="size-4" />
                 {{ index + 1 }}
               </div>
+            </div>
+
+            <div class="flex items-center gap-2 text-sm">
+              <span
+                class="min-w-10 rounded-lg bg-pink-500/50 p-1 py-0 text-center text-xs text-slate-300"
+              >
+                {{ getCategoryName(snippet.categoryId)?.name }}
+              </span>
+              <code class="truncate">{{ snippet.content }}</code>
             </div>
           </div>
         </ScrollArea>
