@@ -60,8 +60,6 @@ useKeyMaps({
   quit,
 })
 
-//
-const listRef = useTemplateRef('listRef')
 const getCategoryName = (id: string) => snippetsStore.getCategory(id)
 
 onMounted(() => {
@@ -97,7 +95,7 @@ onMounted(() => {
       </div>
 
       <!-- 下拉列表 -->
-      <div v-if="foundSnippets.length" ref="listRef" class="text-slate-300 backdrop-blur">
+      <div v-if="foundSnippets.length" class="text-slate-300 backdrop-blur">
         <ScrollArea class="pr-3" :style="{ height: `${60 * foundSnippets.length}px` }">
           <div
             v-for="(snippet, index) in foundSnippets" :key="snippet.id"
