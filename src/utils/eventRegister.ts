@@ -33,16 +33,17 @@ export function registerEvents() {
     if (!mainWindow) {
       return
     }
-
-    mainWindow.show()
     mainWindow.setFocus()
+    mainWindow.show()
     mainWindowStore.isShow = true
   })
 
   useEvent(Events.CLOSE_MAIN_WINDOW, async () => {
     const mainWindow = await getWindow(WindowLabel.MAIN)
-    mainWindow && mainWindow.hide()
-    mainWindowStore.isShow = false
+    if (mainWindow) {
+      mainWindow.hide()
+      mainWindowStore.isShow = false
+    }
   })
 
   useEvent(Events.TOGGLE_MAIN_WINDOW, async () => {
@@ -52,13 +53,20 @@ export function registerEvents() {
   // 内容窗口
   useEvent(Events.OPEN_CONTENT_WINDOW, async () => {
     const contentWindow = await getWindow(WindowLabel.CONTENT)
-    contentWindow && contentWindow.show()
+    if (!contentWindow) {
+      return
+    }
+    contentWindow.show()
     contentWindowStore.isShow = true
+
+    emitEvent(Events.CLOSE_MAIN_WINDOW)
   })
 
   useEvent(Events.CLOSE_CONTENT_WINDOW, async () => {
     const contentWindow = await getWindow(WindowLabel.CONTENT)
-    contentWindow && contentWindow.close()
-    contentWindowStore.isShow = false
+    if (contentWindow) {
+      contentWindow.hide()
+      contentWindowStore.isShow = false
+    }
   })
 }
