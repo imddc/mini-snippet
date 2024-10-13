@@ -10,7 +10,7 @@ import { emitEvent, useEvent } from '@/utils/eventHandler'
 import { listen } from '@tauri-apps/api/event'
 import { writeText } from '@tauri-apps/plugin-clipboard-manager'
 import { Command, EggIcon } from 'lucide-vue-next'
-import { onMounted, ref, useTemplateRef, watch } from 'vue'
+import { computed, onMounted, ref, useTemplateRef, watch } from 'vue'
 
 const snippetsStore = useSnippetsStore()
 const windowStore = useWindowStoreWithOut()
@@ -29,8 +29,11 @@ function getCategoryName(id: string) {
   return snippetsStore.getCategory(id)
 }
 
+const selectedSnippet = computed(() => foundSnippets.value?.[chooseSnippetsIndex.value])
 async function select() {
-  await writeText(foundSnippets.value[chooseSnippetsIndex.value].content)
+  if (selectedSnippet.value) {
+    await writeText(selectedSnippet.value.content)
+  }
   quit()
 }
 

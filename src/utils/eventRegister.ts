@@ -11,6 +11,14 @@ const windowStore = useWindowStoreWithOut()
 export async function registerEvents() {
   const mainWindow = await getWindow(WindowLabel.MAIN)
 
+  mainWindow?.onFocusChanged((focus) => {
+    if (!focus) {
+      setTimeout(() => {
+        emitEvent(Events.CLOSE_MAIN_WINDOW)
+      })
+    }
+  })
+
   useEvent(Events.OPEN_CONTENT_WINDOW, async () => {
     const webviewWindow = new WebviewWindow(WindowLabel.CONTENT, {
       url: 'content',
