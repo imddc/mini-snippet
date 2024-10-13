@@ -4,7 +4,6 @@ import autoprefixer from 'autoprefixer'
 import tailwind from 'tailwindcss'
 import VueRouter from 'unplugin-vue-router/vite'
 import { defineConfig } from 'vite'
-import VueDevTools from 'vite-plugin-vue-devtools'
 
 // eslint-disable-next-line node/prefer-global/process
 const host = process.env.TAURI_DEV_HOST
@@ -16,7 +15,6 @@ export default defineConfig(async () => ({
       dts: 'src/typed-router.d.ts',
     }),
     vue(),
-    VueDevTools(),
   ],
   resolve: {
     alias: {
