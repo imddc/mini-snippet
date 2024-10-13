@@ -19,7 +19,7 @@ const searchValue = ref('')
 const selectedCategory = ref(snippetsStore.getCategories()[0])
 
 // all snippets of selected category
-const selectedSnippet = ref<SnippetV2 | null>(null)
+const selectedSnippet = ref<SnippetV2 | undefined>(undefined)
 
 // use to shown in snippet titles
 const shownSnippets = computed(() => {

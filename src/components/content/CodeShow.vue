@@ -7,7 +7,7 @@ import { codeToHtml } from 'shiki'
 import { ref, watchEffect } from 'vue'
 
 const props = defineProps<{
-  selectedSnippet: SnippetV2 | null
+  selectedSnippet: SnippetV2 | undefined
 }>()
 
 const settingStore = useSettingStore()
