@@ -28,7 +28,7 @@ watchEffect(async () => {
 </script>
 
 <template>
-  <div class="content-animate-gradient min-h-screen rounded-lg">
+  <div class="setting-animate-gradient min-h-screen rounded-lg">
     <!-- 控制按钮区域 -->
     <Header />
 

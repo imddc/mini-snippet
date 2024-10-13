@@ -1,11 +1,16 @@
 .content-animate-gradient {
-  @apply bg-gradient-to-br from-gray-500 via-gray-700 to-gray-500;
+  @apply bg-gradient-to-br from-[#30cfd0] to-[#330867];
+  background-size: 200% 200%;
+  animation: gradient-x 15s ease infinite;
+}
+.setting-animate-gradient {
+  @apply bg-gradient-to-br from-[#30cfd0] to-[#330867];
   background-size: 200% 200%;
   animation: gradient-x 15s ease infinite;
 }
 
 .index-animate-gradient {
-  @apply bg-gradient-to-br from-purple-700 to-blue-500;
+  @apply bg-gradient-to-br from-[#30cfd0] to-[#330867];
   background-size: 200% 200%;
   animation: gradient-x 15s ease infinite;
 }
