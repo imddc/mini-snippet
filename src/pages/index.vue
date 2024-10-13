@@ -30,8 +30,19 @@ function getCategoryName(id: string) {
 }
 
 const selectedSnippet = computed(() => foundSnippets.value?.[chooseSnippetsIndex.value])
-async function select() {
-  if (selectedSnippet.value) {
+async function select(numberKey?: string) {
+  if (!selectedSnippet.value) {
+    return
+  }
+
+  if (numberKey) {
+    if (foundSnippets.value.length) {
+      chooseSnippetsIndex.value = Number.parseInt(numberKey) - 1
+      const res = foundSnippets.value[chooseSnippetsIndex.value]
+      await writeText(res.content)
+    }
+  }
+  else {
     await writeText(selectedSnippet.value.content)
   }
   quit()
@@ -116,7 +127,7 @@ onMounted(async () => {
             v-for="(snippet, index) in foundSnippets" :key="snippet.id"
             :class="index === chooseSnippetsIndex ? 'bg-gray-300/50' : ''"
             class="mt-1 w-full cursor-pointer truncate rounded-md p-1 px-2 text-lg"
-            @mouseenter="chooseSnippetsIndex = index" @click="select"
+            @mouseenter="chooseSnippetsIndex = index" @click="() => select()"
           >
             <div class="flex-between">
               <div class="truncate text-lg">
