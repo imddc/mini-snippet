@@ -2,6 +2,7 @@ import { Events } from '@/constants/eventEnums'
 import { WindowLabel } from '@/constants/windowEnums'
 import { useWindowStoreWithOut } from '@/store/windowStore'
 import { emitEvent, useEvent } from '@/utils/eventHandler'
+import { useTauriStore } from '@/utils/tauriStore'
 import { getWindow } from '@/utils/window'
 import { PhysicalSize } from '@tauri-apps/api/dpi'
 import { WebviewWindow } from '@tauri-apps/api/webviewWindow'
@@ -17,6 +18,10 @@ export async function registerEvents() {
         emitEvent(Events.CLOSE_MAIN_WINDOW)
       })
     }
+  })
+
+  mainWindow?.listen('tauri://close-requested', async () => {
+    await useTauriStore().save()
   })
 
   useEvent(Events.OPEN_CONTENT_WINDOW, async () => {
