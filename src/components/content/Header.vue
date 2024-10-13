@@ -1,11 +1,16 @@
 <script setup lang="ts">
 import { Events } from '@/constants/eventEnums'
 import { emitEvent } from '@/utils/eventHandler'
-import { Bolt, Code, X } from 'lucide-vue-next'
+import { open } from '@tauri-apps/plugin-shell'
+import { Bolt, Code, Github, X } from 'lucide-vue-next'
 import { useRoute } from 'vue-router'
 import Button from '../ui/button/Button.vue'
 
 const route = useRoute()
+
+async function openGithub() {
+  await open('https://github.com/imddc/mini-snippet')
+}
 
 function isCurrentPath(path: '/content' | '/setting') {
   return route.path === path
@@ -31,6 +36,14 @@ function closeContent() {
       <div class="h-full flex-1" data-tauri-drag-region />
 
       <div class="flex-center gap-2">
+        <Button
+          variant="ghost"
+          class="size-8 rounded-full p-1"
+          @click="openGithub"
+        >
+          <Github class="size-4" />
+        </Button>
+
         <Button
           :variant="isCurrentPath('/content') ? 'outline' : 'ghost'"
           size="icon"
