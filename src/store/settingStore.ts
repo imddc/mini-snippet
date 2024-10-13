@@ -36,6 +36,9 @@ export const useSettingStore = defineStore('setting', {
       return this.autoStart
     },
   },
+  persist: {
+    storage: localStorage,
+  },
 })
 
 export function useSettingStoreWithOut() {

@@ -6,11 +6,15 @@ import App from './App.vue'
 import { setupRouter } from './plugins/router'
 import './style/index.css'
 
-const app = createApp(App)
-setupRouter(app)
-setupStore(app)
+async function bootstrap() {
+  const app = createApp(App)
+  setupRouter(app)
+  await setupStore(app)
 
-app.mount('#app')
+  app.mount('#app')
 
-initKeyMaps()
-registerEvents()
+  await initKeyMaps()
+  await registerEvents()
+}
+
+bootstrap()

@@ -1,16 +1,16 @@
 import { Events } from '@/constants/eventEnums'
 import { WindowLabel } from '@/constants/windowEnums'
-import { useContentWindowStoreWithOut } from '@/store/contentWindowStore'
-import { useMainWindowStoreWithOut } from '@/store/mainWindowStore'
+import { useWindowStoreWithOut } from '@/store/windowStore'
 import { emitEvent, useEvent } from '@/utils/eventHandler'
 import { getWindow } from '@/utils/window'
 import { PhysicalSize } from '@tauri-apps/api/dpi'
 import { WebviewWindow } from '@tauri-apps/api/webviewWindow'
 
-const mainWindowStore = useMainWindowStoreWithOut()
-const contentWindowStore = useContentWindowStoreWithOut()
+const windowStore = useWindowStoreWithOut()
 
-export function registerEvents() {
+export async function registerEvents() {
+  const mainWindow = await getWindow(WindowLabel.MAIN)
+
   useEvent(Events.OPEN_CONTENT_WINDOW, async () => {
     const webviewWindow = new WebviewWindow(WindowLabel.CONTENT, {
       url: 'content',
@@ -25,39 +25,36 @@ export function registerEvents() {
       shadow: false,
     })
 
-    webviewWindow.once('tauri://created', () => { })
+    webviewWindow.once('tauri://created', () => {
+    })
   })
 
   // 主窗口
   useEvent(Events.OPEN_MAIN_WINDOW, async () => {
-    const mainWindow = await getWindow(WindowLabel.MAIN)
     if (!mainWindow) {
       return
     }
-    mainWindow.setFocus()
-    mainWindow.show()
-    mainWindowStore.isShow = true
-
-    emitEvent(Events.SEARCH_INPUT_FOCUS)
+    await mainWindow.show()
+    await mainWindow.setFocus()
+    windowStore.isMainWindowShow = true
   })
 
   useEvent(Events.CLOSE_MAIN_WINDOW, async () => {
     const mainWindow = await getWindow(WindowLabel.MAIN)
     if (mainWindow) {
-      mainWindow.hide()
-      mainWindowStore.isShow = false
+      await mainWindow.hide()
+      windowStore.isMainWindowShow = false
     }
   })
 
   useEvent(Events.TOGGLE_MAIN_WINDOW, async () => {
-    emitEvent(mainWindowStore.isShow ? Events.CLOSE_MAIN_WINDOW : Events.OPEN_MAIN_WINDOW)
+    emitEvent(windowStore.isMainWindowShow ? Events.CLOSE_MAIN_WINDOW : Events.OPEN_MAIN_WINDOW)
   })
 
   useEvent(Events.CHANGE_MAIN_WINDOW_HEIGHT, async (listLength: number) => {
-    const window = await getWindow(WindowLabel.MAIN)
-    if (window) {
+    if (mainWindow) {
       const height = (listLength * 60) + (listLength ? 10 : 0) + 72
-      await window.setSize(new PhysicalSize(600, height))
+      await mainWindow.setSize(new PhysicalSize(600, height))
     }
   })
 
@@ -68,7 +65,7 @@ export function registerEvents() {
       return
     }
     contentWindow.show()
-    contentWindowStore.isShow = true
+    windowStore.isContentWindowShow = true
 
     emitEvent(Events.CLOSE_MAIN_WINDOW)
   })
@@ -77,7 +74,7 @@ export function registerEvents() {
     const contentWindow = await getWindow(WindowLabel.CONTENT)
     if (contentWindow) {
       contentWindow.hide()
-      contentWindowStore.isShow = false
+      windowStore.isContentWindowShow = false
     }
   })
 }

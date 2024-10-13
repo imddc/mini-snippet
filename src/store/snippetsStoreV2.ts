@@ -90,6 +90,9 @@ export const useSnippetsStore = defineStore('snippetsV2', {
       await tauriStore.set(TAURI_STORE_KEYS.SNIPPETS, this.snippets)
     },
   },
+  persist: {
+    storage: localStorage,
+  },
 })
 
 export function useSnippetsStoreWithOut() {

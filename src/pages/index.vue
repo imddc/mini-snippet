@@ -5,12 +5,14 @@ import ScrollArea from '@/components/ui/scroll-area/ScrollArea.vue'
 import { useKeyMaps } from '@/composables/useKeyMaps'
 import { Events } from '@/constants/eventEnums'
 import { useSnippetsStore } from '@/store/snippetsStoreV2'
+import { useWindowStoreWithOut } from '@/store/windowStore'
 import { emitEvent, useEvent } from '@/utils/eventHandler'
 import { writeText } from '@tauri-apps/plugin-clipboard-manager'
 import { Command, EggIcon } from 'lucide-vue-next'
-import { onMounted, ref, useTemplateRef, watchEffect } from 'vue'
+import { onMounted, ref, useTemplateRef, watch } from 'vue'
 
 const snippetsStore = useSnippetsStore()
+const windowStore = useWindowStoreWithOut()
 
 const searchValue = ref('')
 const searchInputRef = useTemplateRef<InstanceType<typeof Input>>('searchInputRef')
@@ -22,14 +24,23 @@ function goContent() {
   emitEvent(Events.OPEN_CONTENT_WINDOW)
 }
 
-watchEffect(() => {
+watch(() => windowStore.isMainWindowShow, () => {
+  if (windowStore.isMainWindowShow) {
+    searchInputRef.value?.setFocus()
+  }
+})
+
+watch(() => searchValue.value, () => {
   foundSnippets.value = searchValue.value
     ? snippetsStore.matchSnippets(searchValue.value)
     : []
 
   emitEvent(Events.CHANGE_MAIN_WINDOW_HEIGHT, foundSnippets.value.length)
-
   chooseSnippetsIndex.value = 0
+
+  console.log(snippetsStore.snippets)
+}, {
+  immediate: true,
 })
 
 async function select() {
@@ -63,12 +74,6 @@ useKeyMaps({
 const getCategoryName = (id: string) => snippetsStore.getCategory(id)
 
 onMounted(() => {
-  if (searchInputRef.value) {
-    useEvent(Events.SEARCH_INPUT_FOCUS, () => {
-      searchInputRef.value?.setFocus()
-    })
-  }
-
   useEvent(Events.CLOSE_MAIN_WINDOW, () => {
     searchValue.value = ''
   })
