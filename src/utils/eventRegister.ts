@@ -37,6 +37,8 @@ export function registerEvents() {
     mainWindow.setFocus()
     mainWindow.show()
     mainWindowStore.isShow = true
+
+    emitEvent(Events.SEARCH_INPUT_FOCUS)
   })
 
   useEvent(Events.CLOSE_MAIN_WINDOW, async () => {
@@ -49,6 +51,14 @@ export function registerEvents() {
 
   useEvent(Events.TOGGLE_MAIN_WINDOW, async () => {
     emitEvent(mainWindowStore.isShow ? Events.CLOSE_MAIN_WINDOW : Events.OPEN_MAIN_WINDOW)
+  })
+
+  useEvent(Events.CHANGE_MAIN_WINDOW_HEIGHT, async (listLength: number) => {
+    const window = await getWindow(WindowLabel.MAIN)
+    if (window) {
+      const height = (listLength * 60) + (listLength ? 10 : 0) + 72
+      await window.setSize(new PhysicalSize(600, height))
+    }
   })
 
   // 内容窗口
@@ -68,14 +78,6 @@ export function registerEvents() {
     if (contentWindow) {
       contentWindow.hide()
       contentWindowStore.isShow = false
-    }
-  })
-
-  useEvent(Events.CHANGE_MAIN_WINDOW_HEIGHT, async (listLength: number) => {
-    const window = await getWindow(WindowLabel.MAIN)
-    if (window) {
-      const height = (listLength * 60) + (listLength ? 10 : 0) + 72
-      await window.setSize(new PhysicalSize(600, height))
     }
   })
 }

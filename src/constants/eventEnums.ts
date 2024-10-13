@@ -5,6 +5,8 @@ export enum Events {
 
   CHANGE_MAIN_WINDOW_HEIGHT = 'change-main-window-height',
 
+  SEARCH_INPUT_FOCUS = 'search-input-focus',
+
   OPEN_CONTENT_WINDOW = 'open-content-window',
   CLOSE_CONTENT_WINDOW = 'close-content-window',
   TOGGLE_CONTENT_WINDOW = 'toggle-content-window',

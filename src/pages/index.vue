@@ -64,7 +64,9 @@ const getCategoryName = (id: string) => snippetsStore.getCategory(id)
 
 onMounted(() => {
   if (searchInputRef.value) {
-    searchInputRef.value?.setFocus()
+    useEvent(Events.SEARCH_INPUT_FOCUS, () => {
+      searchInputRef.value?.setFocus()
+    })
   }
 
   useEvent(Events.CLOSE_MAIN_WINDOW, () => {
