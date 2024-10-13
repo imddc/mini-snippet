@@ -11,9 +11,6 @@ export const useWindowStore = defineStore<string, WindowState>('mainWindow', {
     isMainWindowShow: false,
     isContentWindowShow: false,
   }),
-  persist: {
-    storage: localStorage,
-  },
 })
 
 export function useWindowStoreWithOut() {

@@ -21,6 +21,9 @@ export const useSnippetsStore = defineStore('snippetsV2', {
   }),
   actions: {
     async initSnippets() {
+      await this.syncData()
+    },
+    async syncData() {
       const store = tauriStore.getStore()
       this.categories = await store?.get(TAURI_STORE_KEYS.CATEGORIES) || categoriesV2
       this.snippets = await store?.get(TAURI_STORE_KEYS.SNIPPETS) || snippetsV2
@@ -89,9 +92,6 @@ export const useSnippetsStore = defineStore('snippetsV2', {
       }
       await tauriStore.set(TAURI_STORE_KEYS.SNIPPETS, this.snippets)
     },
-  },
-  persist: {
-    storage: localStorage,
   },
 })
 

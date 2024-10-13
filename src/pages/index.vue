@@ -7,6 +7,7 @@ import { Events } from '@/constants/eventEnums'
 import { useSnippetsStore } from '@/store/snippetsStoreV2'
 import { useWindowStoreWithOut } from '@/store/windowStore'
 import { emitEvent, useEvent } from '@/utils/eventHandler'
+import { listen } from '@tauri-apps/api/event'
 import { writeText } from '@tauri-apps/plugin-clipboard-manager'
 import { Command, EggIcon } from 'lucide-vue-next'
 import { onMounted, ref, useTemplateRef, watch } from 'vue'
@@ -24,24 +25,9 @@ function goContent() {
   emitEvent(Events.OPEN_CONTENT_WINDOW)
 }
 
-watch(() => windowStore.isMainWindowShow, () => {
-  if (windowStore.isMainWindowShow) {
-    searchInputRef.value?.setFocus()
-  }
-})
-
-watch(() => searchValue.value, () => {
-  foundSnippets.value = searchValue.value
-    ? snippetsStore.matchSnippets(searchValue.value)
-    : []
-
-  emitEvent(Events.CHANGE_MAIN_WINDOW_HEIGHT, foundSnippets.value.length)
-  chooseSnippetsIndex.value = 0
-
-  console.log(snippetsStore.snippets)
-}, {
-  immediate: true,
-})
+function getCategoryName(id: string) {
+  return snippetsStore.getCategory(id)
+}
 
 async function select() {
   await writeText(foundSnippets.value[chooseSnippetsIndex.value].content)
@@ -71,11 +57,29 @@ useKeyMaps({
   quit,
 })
 
-const getCategoryName = (id: string) => snippetsStore.getCategory(id)
+watch(() => windowStore.isMainWindowShow, () => {
+  if (windowStore.isMainWindowShow) {
+    searchInputRef.value?.setFocus()
+  }
+})
 
-onMounted(() => {
+watch(() => searchValue.value, () => {
+  foundSnippets.value = searchValue.value
+    ? snippetsStore.matchSnippets(searchValue.value)
+    : []
+
+  emitEvent(Events.CHANGE_MAIN_WINDOW_HEIGHT, foundSnippets.value.length)
+  chooseSnippetsIndex.value = 0
+}, {
+  immediate: true,
+})
+onMounted(async () => {
   useEvent(Events.CLOSE_MAIN_WINDOW, () => {
     searchValue.value = ''
+  })
+
+  await listen(Events.STORE_MUTATION, () => {
+    snippetsStore.syncData()
   })
 })
 </script>

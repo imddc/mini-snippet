@@ -6,7 +6,9 @@ import CodeShow from '@/components/content/CodeShow.vue'
 import Search from '@/components/content/Search.vue'
 import SnippetsEditor from '@/components/content/SnippetsEditor.vue'
 import ScrollArea from '@/components/ui/scroll-area/ScrollArea.vue'
+import { Events } from '@/constants/eventEnums'
 import { useSnippetsStoreWithOut } from '@/store/snippetsStoreV2'
+import { emit } from '@tauri-apps/api/event'
 import { Egg, Folder, FolderPlus } from 'lucide-vue-next'
 import { storeToRefs } from 'pinia'
 import { computed, ref, watch } from 'vue'
@@ -14,6 +16,10 @@ import { toast } from 'vue-sonner'
 
 const snippetsStore = useSnippetsStoreWithOut()
 const { snippets, categories } = storeToRefs(snippetsStore)
+
+snippetsStore.$subscribe(async () => {
+  await emit(Events.STORE_MUTATION)
+})
 
 const searchValue = ref('')
 const selectedCategory = ref(snippetsStore.getCategories()[0])
