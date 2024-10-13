@@ -73,6 +73,7 @@ watch(() => searchValue.value, () => {
 }, {
   immediate: true,
 })
+
 onMounted(async () => {
   useEvent(Events.CLOSE_MAIN_WINDOW, () => {
     searchValue.value = ''
@@ -93,7 +94,7 @@ onMounted(async () => {
     >
       <div class="flex-between gap-2">
         <Input
-          ref="searchInputRef" v-model.trim="searchValue" placeholder="input code ..."
+          ref="searchInputRef" v-model.trim="searchValue" placeholder="input here ..."
           class="h-12 border-none bg-background/50 p-2 text-lg"
         />
         <!-- button -->
