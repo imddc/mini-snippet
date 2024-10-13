@@ -18,7 +18,7 @@
     "core:window:allow-close",
     "core:window:allow-set-closable",
     "core:window:allow-set-focus",
-    "core:window:allow-set-fullscreen",
+    "core:window:allow-set-size",
     "core:webview:allow-create-webview",
     "core:webview:allow-create-webview-window",
     "clipboard-manager:allow-read-text",

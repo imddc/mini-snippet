@@ -3,6 +3,8 @@ export enum Events {
   CLOSE_MAIN_WINDOW = 'close-main-window',
   TOGGLE_MAIN_WINDOW = 'toggle-main-window',
 
+  CHANGE_MAIN_WINDOW_HEIGHT = 'change-main-window-height',
+
   OPEN_CONTENT_WINDOW = 'open-content-window',
   CLOSE_CONTENT_WINDOW = 'close-content-window',
   TOGGLE_CONTENT_WINDOW = 'toggle-content-window',

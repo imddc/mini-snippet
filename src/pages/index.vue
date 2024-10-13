@@ -27,6 +27,8 @@ watchEffect(() => {
     ? snippetsStore.matchSnippets(searchValue.value)
     : []
 
+  emitEvent(Events.CHANGE_MAIN_WINDOW_HEIGHT, foundSnippets.value.length)
+
   chooseSnippetsIndex.value = 0
 })
 
@@ -82,9 +84,7 @@ onMounted(() => {
     >
       <div class="flex-between gap-2">
         <Input
-          ref="searchInputRef"
-          v-model.trim="searchValue"
-          placeholder="input code ..."
+          ref="searchInputRef" v-model.trim="searchValue" placeholder="input code ..."
           class="h-12 border-none bg-background/50 p-2 text-lg"
         />
         <!-- button -->
@@ -97,22 +97,13 @@ onMounted(() => {
       </div>
 
       <!-- 下拉列表 -->
-      <div
-        v-if="foundSnippets.length"
-        ref="listRef"
-        class="text-slate-300 backdrop-blur"
-      >
-        <ScrollArea
-          class="pr-3"
-          :style="{ height: `${60 * foundSnippets.length}px` }"
-        >
+      <div v-if="foundSnippets.length" ref="listRef" class="text-slate-300 backdrop-blur">
+        <ScrollArea class="pr-3" :style="{ height: `${60 * foundSnippets.length}px` }">
           <div
-            v-for="(snippet, index) in foundSnippets"
-            :key="snippet.id"
+            v-for="(snippet, index) in foundSnippets" :key="snippet.id"
             :class="index === chooseSnippetsIndex ? 'bg-gray-300/50' : ''"
             class="mt-1 w-full cursor-pointer truncate rounded-md p-1 px-2 text-lg"
-            @mouseenter="chooseSnippetsIndex = index"
-            @click="select"
+            @mouseenter="chooseSnippetsIndex = index" @click="select"
           >
             <div class="flex-between">
               <div class="truncate text-lg">
@@ -125,9 +116,7 @@ onMounted(() => {
             </div>
 
             <div class="flex items-center gap-2 text-sm">
-              <span
-                class="min-w-10 rounded-lg bg-pink-500/50 p-1 py-0 text-center text-xs text-slate-300"
-              >
+              <span class="min-w-10 rounded-lg bg-pink-500/50 p-1 py-0 text-center text-xs text-slate-300">
                 {{ getCategoryName(snippet.categoryId)?.name }}
               </span>
               <code class="truncate">{{ snippet.content }}</code>

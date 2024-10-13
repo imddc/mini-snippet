@@ -4,6 +4,7 @@ import { useContentWindowStoreWithOut } from '@/store/contentWindowStore'
 import { useMainWindowStoreWithOut } from '@/store/mainWindowStore'
 import { emitEvent, useEvent } from '@/utils/eventHandler'
 import { getWindow } from '@/utils/window'
+import { PhysicalSize } from '@tauri-apps/api/dpi'
 import { WebviewWindow } from '@tauri-apps/api/webviewWindow'
 
 const mainWindowStore = useMainWindowStoreWithOut()
@@ -67,6 +68,14 @@ export function registerEvents() {
     if (contentWindow) {
       contentWindow.hide()
       contentWindowStore.isShow = false
+    }
+  })
+
+  useEvent(Events.CHANGE_MAIN_WINDOW_HEIGHT, async (listLength: number) => {
+    const window = await getWindow(WindowLabel.MAIN)
+    if (window) {
+      const height = (listLength * 60) + (listLength ? 10 : 0) + 72
+      await window.setSize(new PhysicalSize(600, height))
     }
   })
 }
