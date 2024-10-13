@@ -4,7 +4,7 @@ import Main from '@/components/content/Main.vue'
 </script>
 
 <template>
-  <div class="content-animate-gradient min-h-screen rounded-lg">
+  <div class="relative min-h-screen rounded-lg">
     <!-- 控制按钮区域 -->
     <Header />
 

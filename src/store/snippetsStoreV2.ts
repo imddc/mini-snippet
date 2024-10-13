@@ -1,5 +1,4 @@
 import type { CategoryV2, SnippetV2 } from '@/types/snippet'
-import type { BundledLanguage } from 'shiki'
 import { categoriesV2, snippetsV2 } from '@/constants/mockData'
 import { TAURI_STORE_KEYS } from '@/constants/tauri'
 import { store } from '@/plugins/pinia'
