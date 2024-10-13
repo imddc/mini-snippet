@@ -1,6 +1,10 @@
 mod tray;
 
 #[tauri::command]
+fn paste_mock() -> () {
+    println!("paste_mock")
+}
+#[tauri::command]
 fn greet(name: &str) -> String {
     format!("Hello, {}! You've been greeted from Rust!", name)
 }
@@ -29,7 +33,7 @@ pub fn run() {
             Ok(())
         })
         .plugin(tauri_plugin_dialog::init())
-        .invoke_handler(tauri::generate_handler![greet, my_fn])
+        .invoke_handler(tauri::generate_handler![greet, my_fn, paste_mock])
         .run(tauri::generate_context!())
         .expect("error while running tauri application")
 }

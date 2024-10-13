@@ -7,6 +7,7 @@ import { Events } from '@/constants/eventEnums'
 import { useSnippetsStore } from '@/store/snippetsStoreV2'
 import { useWindowStoreWithOut } from '@/store/windowStore'
 import { emitEvent, useEvent } from '@/utils/eventHandler'
+import { invoke } from '@tauri-apps/api/core'
 import { listen } from '@tauri-apps/api/event'
 import { writeText } from '@tauri-apps/plugin-clipboard-manager'
 import { Command, EggIcon } from 'lucide-vue-next'
@@ -29,6 +30,11 @@ function getCategoryName(id: string) {
   return snippetsStore.getCategory(id)
 }
 
+async function pasteMock(content: string) {
+  await writeText(content)
+  await invoke('paste_mock')
+}
+
 const selectedSnippet = computed(() => foundSnippets.value?.[chooseSnippetsIndex.value])
 async function select(numberKey?: string) {
   if (!selectedSnippet.value) {
@@ -39,13 +45,13 @@ async function select(numberKey?: string) {
     if (foundSnippets.value.length) {
       chooseSnippetsIndex.value = Number.parseInt(numberKey) - 1
       const res = foundSnippets.value[chooseSnippetsIndex.value]
-      await writeText(res.content)
+      await pasteMock(res.content)
     }
   }
   else {
-    await writeText(selectedSnippet.value.content)
+    await pasteMock(selectedSnippet.value.content)
   }
-  quit()
+  // quit()
 }
 
 function quit() {
