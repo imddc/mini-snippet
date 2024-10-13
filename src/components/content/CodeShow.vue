@@ -37,12 +37,12 @@ watchEffect(() => {
 </script>
 
 <template>
-  <div class="h-full">
+  <div class="h-full overflow-hidden rounded-lg shadow-md">
     <template v-if="selectedSnippet">
-      <div class="h-full min-w-0 flex-1 grow-0 overflow-auto rounded-lg bg-gray-900/90 p-4 shadow-md">
+      <div class="size-full rounded-lg bg-gray-900/90 p-2">
         <div
           v-if="!loading"
-          class="!select-text text-ellipsis text-sm"
+          class="size-full !select-text overflow-x-hidden text-sm"
           v-html="codeHTML"
         />
       </div>
