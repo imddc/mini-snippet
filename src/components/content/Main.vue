@@ -226,6 +226,7 @@ watch(
       <div class="h-full flex-1 overflow-hidden">
         <template v-if="isEditorOpen">
           <SnippetsEditor
+            :selected-category-id="selectedCategory.id"
             :editing-snippet="editorSnippet"
             @close="isEditorOpen = false"
             @change="handleSnippetChange"

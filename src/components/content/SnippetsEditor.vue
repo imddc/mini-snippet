@@ -13,6 +13,7 @@ type SnippetV2WithoutId = Omit<SnippetV2, 'id'>
 
 const props = withDefaults(defineProps<{
   editingSnippet: SnippetV2 | null
+  selectedCategoryId: string
 }>(), {})
 
 const emit = defineEmits<{
@@ -23,7 +24,7 @@ const emit = defineEmits<{
 const snippetsStore = useSnippetsStoreWithOut()
 
 const snippet = ref<SnippetV2WithoutId>(props.editingSnippet || {
-  categoryId: '',
+  categoryId: props.selectedCategoryId,
   title: '',
   content: '',
 })
