@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2.0.0",
-  "productName": "node-version-controller",
+  "productName": "mini-snippet",
   "version": "0.1.0",
-  "identifier": "com.node-version-controller.app",
+  "identifier": "com.mini-snippet.app",
   "build": {
     "beforeDevCommand": "pnpm dev",
     "devUrl": "http://localhost:1420",
