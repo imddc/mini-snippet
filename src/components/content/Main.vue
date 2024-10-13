@@ -180,8 +180,8 @@ watch(
                 <Actions
                   :edit="true"
                   :delete="true"
-                  @edit="editCategory(category.id)"
-                  @delete="deleteCategory(category.id)"
+                  @edit="() => editCategory(category.id)"
+                  @delete="() => deleteCategory(category.id)"
                 />
               </div>
             </div>
@@ -246,8 +246,8 @@ watch(
 
     <CategoryEditDialog
       v-if="isDialogOpen"
+      v-model:open="isDialogOpen"
       :category="dialogCategory"
-      @close="isDialogOpen = false"
       @change="handleCategoryChange"
     />
   </div>

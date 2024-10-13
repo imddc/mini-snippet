@@ -13,9 +13,10 @@ const { category } = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  close: []
   change: [value: CategoryV2]
 }>()
+
+const open = defineModel<boolean>('open')
 
 const value = ref<CategoryV2>(category || {
   id: '',
@@ -34,7 +35,7 @@ function change() {
 </script>
 
 <template>
-  <Dialog open>
+  <Dialog v-model:open="open">
     <DialogContent>
       <DialogHeader>
         <DialogTitle>
@@ -70,7 +71,7 @@ function change() {
       </div>
 
       <DialogFooter>
-        <Button size="sm" variant="outline" @click="$emit('close')">
+        <Button size="sm" variant="outline" @click="open = false">
           cancel
         </Button>
         <Button size="sm" variant="outline" @click="change">
