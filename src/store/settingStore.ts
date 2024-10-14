@@ -28,7 +28,7 @@ export const useSettingStore = defineStore('setting', {
   },
   actions: {
     async initSettingStore() {
-      this.autoStart = await isEnabled()
+      this.autoStart = await tauriStore.get(TAURI_STORE_KEYS.AUTO_START) || await isEnabled()
       this.shortcutHotKey = await tauriStore.get(TAURI_STORE_KEYS.SHORTCUT_HOT_KEY) || 'space'
       this.shortcutModifierKey = await tauriStore.get(TAURI_STORE_KEYS.SHORTCUT_MODIFIER_KEY) || 'alt'
     },
