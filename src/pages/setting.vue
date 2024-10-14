@@ -9,13 +9,15 @@ import { Select, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/
 import SelectContent from '@/components/ui/select/SelectContent.vue'
 import { Switch } from '@/components/ui/switch'
 import { useSettingStore } from '@/store/settingStore'
+import { useSnippetsStore } from '@/store/snippetsStoreV2'
 import { disable, enable } from '@tauri-apps/plugin-autostart'
-import { BaseDirectory, readFile } from '@tauri-apps/plugin-fs'
+import { BaseDirectory, writeTextFile } from '@tauri-apps/plugin-fs'
 import { bundledThemesInfo } from 'shiki'
 import { ref, watch } from 'vue'
 import { toast } from 'vue-sonner'
 
 const settingStore = useSettingStore()
+const snippetStore = useSnippetsStore()
 
 const test = ref<Record<string, string>>({})
 
@@ -36,14 +38,21 @@ async function loadLocal() {
       }
       const text = await file.text()
       test.value = JSON.parse(text)
-
-      console.log(test.value)
     }
   })
   input.remove()
 }
 
-function saveLocal() {
+async function saveLocal() {
+  const data: Record<string, any> = {}
+  Object.entries({ ...snippetStore.$state, ...settingStore.$state }).forEach(([key, value]) => {
+    data[key] = value
+  })
+
+  await writeTextFile('mini-snippet.json', JSON.stringify(data), {
+    baseDir: BaseDirectory.Desktop,
+  })
+  toast.success('saved to desktop')
 }
 
 watch(() => settingStore.autoStart, async (val) => {
@@ -73,11 +82,7 @@ watch(() => settingStore.autoStart, async (val) => {
           </CardDescription>
         </CardHeader>
         <CardContent class="flex items-center gap-2">
-          <Switch
-            id="autoStart"
-            :checked="settingStore.getAutoStart()"
-            @update:checked="settingStore.setAutoStart"
-          />
+          <Switch id="autoStart" :checked="settingStore.getAutoStart()" @update:checked="settingStore.setAutoStart" />
           <Label for="autoStart" class="text-xl">
             {{ settingStore.autoStart ? 'Enabled' : 'Disabled' }}
           </Label>
@@ -92,11 +97,7 @@ watch(() => settingStore.autoStart, async (val) => {
           <CardDescription>choose a code theme</CardDescription>
         </CardHeader>
         <CardContent>
-          <Select
-            v-model="settingStore.codeTheme"
-            class="mt-2"
-            @update:model-value="updateCodeTheme"
-          >
+          <Select v-model="settingStore.codeTheme" class="mt-2" @update:model-value="updateCodeTheme">
             <SelectTrigger class="w-[280px]">
               <SelectValue placeholder="choose a code theme" />
             </SelectTrigger>

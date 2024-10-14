@@ -42,12 +42,12 @@
       "allow": [{ "path": "$APPDATA/*" }]
     },
     {
-      "identifier": "fs:allow-read",
-      "allow": [{ "path": "$CONFIG/*" }]
+      "identifier": "fs:allow-write-file",
+      "allow": [{ "path": "$DESKTOP/*" }]
     },
     {
-      "identifier": "fs:allow-write",
-      "allow": [{ "path": "$CONFIG/*" }]
+      "identifier": "fs:allow-write-text-file",
+      "allow": [{ "path": "$DESKTOP/*" }]
     }
   ]
 }
