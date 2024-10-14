@@ -77,22 +77,29 @@ useKeyMaps({
   quit,
 })
 
-watch(() => windowStore.isMainWindowShow, () => {
-  if (windowStore.isMainWindowShow) {
-    searchInputRef.value?.setFocus()
-  }
-})
+watch(
+  () => windowStore.isMainWindowShow,
+  (val) => {
+    if (val) {
+      searchInputRef.value?.setFocus()
+    }
+  },
+)
 
-watch(() => searchValue.value, () => {
-  foundSnippets.value = searchValue.value
-    ? snippetsStore.matchSnippets(searchValue.value)
-    : []
+watch(
+  () => searchValue.value,
+  (val) => {
+    foundSnippets.value = val
+      ? snippetsStore.matchSnippets(val)
+      : []
 
-  emitEvent(Events.CHANGE_MAIN_WINDOW_HEIGHT, foundSnippets.value.length || 0)
-  chooseSnippetsIndex.value = 0
-}, {
-  immediate: true,
-})
+    emitEvent(Events.CHANGE_MAIN_WINDOW_HEIGHT, foundSnippets.value.length || 0)
+    chooseSnippetsIndex.value = 0
+  },
+  {
+    immediate: true,
+  },
+)
 
 onMounted(async () => {
   useEvent(Events.CLOSE_MAIN_WINDOW, () => {
