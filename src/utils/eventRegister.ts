@@ -54,7 +54,6 @@ export async function registerEvents() {
   })
 
   useEvent(Events.CLOSE_MAIN_WINDOW, async () => {
-    const mainWindow = await getWindow(WindowLabel.MAIN)
     if (mainWindow) {
       await mainWindow.hide()
       windowStore.isMainWindowShow = false
