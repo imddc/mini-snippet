@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { Toaster } from '@/components/ui/sonner'
-import { setupSystemTray } from '@/plugins/tray'
+// import { setupSystemTray } from '@/plugins/tray'
 import { onMounted } from 'vue'
 
 onMounted(async () => {
-  await setupSystemTray()
+  // await setupSystemTray()
 })
 </script>
 

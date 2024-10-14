@@ -22,20 +22,23 @@ snippetsStore.$subscribe(async () => {
 })
 
 const searchValue = ref('')
-const selectedCategory = ref(snippetsStore.getCategories()[0])
+const selectedCategory = ref<CategoryV2 | undefined>(snippetsStore.getCategories()[0])
 
 // all snippets of selected category
 const selectedSnippet = ref<SnippetV2 | undefined>(undefined)
 
 // use to shown in snippet titles
 const shownSnippets = computed(() => {
-  if (searchValue.value) {
-    return snippetsStore.matchSnippets(
-      searchValue.value,
-      selectedCategory.value.id,
-    )
+  if (selectedCategory.value) {
+    if (searchValue.value) {
+      return snippetsStore.matchSnippets(
+        searchValue.value,
+        selectedCategory.value.id,
+      )
+    }
+    return snippetsStore.getSnippets(selectedCategory.value.id)
   }
-  return snippetsStore.getSnippets(selectedCategory.value.id)
+  return []
 })
 
 const isDialogOpen = ref(false)
@@ -232,7 +235,7 @@ watch(
       <div class="h-full flex-1 overflow-hidden">
         <template v-if="isEditorOpen">
           <SnippetsEditor
-            :selected-category-id="selectedCategory.id"
+            :selected-category-id="selectedCategory?.id || ''"
             :editing-snippet="editorSnippet"
             @close="isEditorOpen = false"
             @change="handleSnippetChange"

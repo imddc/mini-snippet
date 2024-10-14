@@ -9,7 +9,10 @@ export function useTauriStore() {
     if (store) {
       return
     }
+
     store = await createStore(TAURI_STORE_NAME, {
+      // @ts-expect-error rust error
+      autoSave: 1600,
     })
   }
 

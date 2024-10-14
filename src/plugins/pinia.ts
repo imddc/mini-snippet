@@ -11,8 +11,8 @@ export async function setupStore(app: App) {
   await tauriStore.initStore()
   app.use(store)
 
-  setupSettingStore()
-  setupSnippetsStore()
+  await setupSettingStore()
+  await setupSnippetsStore()
 }
 
 export { store }

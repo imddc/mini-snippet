@@ -58,7 +58,6 @@ async function loadLocal() {
           settingStore[fnName](value as never)
         }
       })
-
       toast.success('load success')
     }
   })
