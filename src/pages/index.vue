@@ -88,7 +88,7 @@ watch(() => searchValue.value, () => {
     ? snippetsStore.matchSnippets(searchValue.value)
     : []
 
-  emitEvent(Events.CHANGE_MAIN_WINDOW_HEIGHT, foundSnippets.value.length)
+  emitEvent(Events.CHANGE_MAIN_WINDOW_HEIGHT, foundSnippets.value.length || 0)
   chooseSnippetsIndex.value = 0
 }, {
   immediate: true,

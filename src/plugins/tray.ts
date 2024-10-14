@@ -1,16 +1,20 @@
 import { Menu } from '@tauri-apps/api/menu'
 import { TrayIcon } from '@tauri-apps/api/tray'
 
-function onQuit() {
+function onQuit() {}
+
+function onShow() {
+  console.log('show')
 }
 
-function onShow() {}
-
-function onHide() {}
+function onHide() {
+  console.log('hide')
+}
 
 let tray: TrayIcon | null = null
 
 export async function setupSystemTray() {
+  console.log('setup system tray')
   if (tray !== null) {
     return
   }
@@ -19,7 +23,7 @@ export async function setupSystemTray() {
     items: [
       {
         id: 'quit',
-        text: 'Quit',
+        text: 'Quit11',
         action: onQuit,
       },
       {
@@ -35,11 +39,12 @@ export async function setupSystemTray() {
     ],
   })
 
-  tray = await TrayIcon.new({ tooltip: 'awesome code' })
+  tray = await TrayIcon.new({
+    tooltip: 'mini-snippet',
+  })
 
-  tray.setTitle('code')
-  tray.setIcon('icon.png')
-  tray.setMenu(menu)
-  tray.setVisible(true)
-  tray.setIconAsTemplate(true)
+  await tray.setIcon('./icons/icon.png')
+  await tray.setMenu(menu)
+  await tray.setVisible(true)
+  await tray.setIconAsTemplate(true)
 }
