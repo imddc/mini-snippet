@@ -3,19 +3,19 @@ import type { BundledTheme } from 'shiki'
 import Header from '@/components/content/Header.vue'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import SelectContent from '@/components/ui/select/SelectContent.vue'
 import { Switch } from '@/components/ui/switch'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { useSettingStore } from '@/store/settingStore'
 import { useSnippetsStore } from '@/store/snippetsStoreV2'
 import { disable, enable } from '@tauri-apps/plugin-autostart'
 import { BaseDirectory, writeTextFile } from '@tauri-apps/plugin-fs'
 import { useKeyModifier } from '@vueuse/core'
-import { Command, Option } from 'lucide-vue-next'
+import { CircleHelp, Command, Option, Plus, Regex } from 'lucide-vue-next'
 import { bundledThemesInfo } from 'shiki'
-import { ref, watch } from 'vue'
+import { onMounted, onUnmounted, ref, watch } from 'vue'
 import { toast } from 'vue-sonner'
 
 type MethodsWithSetPrefix<T> = {
@@ -97,11 +97,39 @@ const altKey = useKeyModifier('Alt')
 const controlKey = useKeyModifier('Control')
 const metaKey = useKeyModifier('Meta')
 
-const isInputFocus = ref(false)
+const isShortcutFocus = ref(false)
 const hotKey = ref('')
 
+const excludedKeys = ['alt', 'meta', 'control', 'shift', 'tab', 'escape', 'enter']
+function testKey(e: KeyboardEvent) {
+  const testRes = excludedKeys.some(excludedKey => e.key.toLowerCase().includes(excludedKey))
+  // 不处理特殊按键
+  if (testRes) {
+    return
+  }
+  // 当指定修饰键按下且shortcut聚焦时,处理事件
+  if (altKey.value || controlKey.value || metaKey.value) {
+    if (e.code.startsWith('Key')) {
+      hotKey.value = e.code.slice(3)
+    }
+    else if (e.code.startsWith('Digit')) {
+      hotKey.value = e.code.slice(5)
+    }
+    else {
+      hotKey.value = e.code
+    }
+  }
+}
+
+onMounted(() => {
+  window.addEventListener('keyup', testKey)
+})
+onUnmounted(() => {
+  window.removeEventListener('keyup', testKey)
+})
+
 watch(
-  () => isInputFocus.value,
+  () => isShortcutFocus.value,
   (val) => {
     if (val) {
       hotKey.value = 'press'
@@ -166,21 +194,42 @@ watch(
           </CardTitle>
           <CardDescription>input a shortcut</CardDescription>
         </CardHeader>
-        <CardContent class="flex-center gap-2">
-          <div class="flex items-center gap-2">
-            <div class="icon-wrapper" :class="{ active: (controlKey || metaKey) && isInputFocus }">
-              <Command class="icon" />
-            </div>
-            <div class="icon-wrapper" :class="{ active: (altKey && isInputFocus) }">
-              <Option class="icon" />
-            </div>
-          </div>
-          <input
-            class="h-8 w-20 select-none rounded-md bg-background/50 px-2 py-1 text-foreground focus:ring-2 focus:ring-blue-500"
-            :value="hotKey"
-            @focus="isInputFocus = true"
-            @blur="isInputFocus = false"
+        <CardContent>
+          <div
+            class="flex-center mx-auto w-fit gap-2 p-2 px-4"
+            :class="{ 'ring-4 ring-blue-500': isShortcutFocus }"
+            @click="isShortcutFocus = true"
           >
+            <div
+              class="flex items-center gap-2"
+            >
+              <div class="icon-wrapper" :class="{ active: (controlKey || metaKey) && isShortcutFocus }">
+                <Command class="icon" />
+              </div>
+              <div class="icon-wrapper" :class="{ active: (altKey && isShortcutFocus) }">
+                <Option class="icon" />
+              </div>
+            </div>
+            <Plus class="size-4" />
+            <div
+              class="h-8 w-20 select-none rounded-md bg-background/50 px-2 py-1 text-foreground"
+            >
+              {{ hotKey }}
+            </div>
+
+            <TooltipProvider :delay-duration="100">
+              <Tooltip>
+                <TooltipTrigger as-child>
+                  <div class="cursor-pointer rounded-full bg-gray-500/50 p-1 hover:bg-gray-600/50">
+                    <CircleHelp class="size-4" />
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>type a shortcut, except modifierKey, like `Space`,`a`,`1`,`+`</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
         </CardContent>
       </Card>
 
