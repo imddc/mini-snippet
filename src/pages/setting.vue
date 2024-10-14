@@ -152,9 +152,9 @@ watch(() => settingStore.autoStart, async (val) => {
       <Card>
         <CardHeader>
           <CardTitle>
-            Local
+            Persistence
           </CardTitle>
-          <CardDescription>config local</CardDescription>
+          <CardDescription>config persistence</CardDescription>
         </CardHeader>
         <CardContent class="flex items-center gap-2">
           <Button size="sm" variant="outline" @click="loadLocal">
