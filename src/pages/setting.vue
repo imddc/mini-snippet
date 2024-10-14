@@ -65,6 +65,7 @@ async function loadLocal() {
       function getSetFnName<T extends typeof snippetStore | typeof settingStore>(key: string) {
         return `set${key.charAt(0).toUpperCase() + key.slice(1)}` as MethodsWithSetPrefix<T>
       }
+      // 开始载入
       Object.entries(data).forEach(async ([key, value]) => {
         if (key in snippetStore.$state) {
           const fnName = getSetFnName<typeof snippetStore>(key)
@@ -75,6 +76,8 @@ async function loadLocal() {
           await settingStore[fnName](value as never)
         }
       })
+
+      emitEvent(Events.SHORTCUT_UPDATE)
       toast.success('load success')
     }
   })
