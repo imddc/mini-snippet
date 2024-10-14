@@ -14,4 +14,6 @@ export enum Events {
   CHOOSE_NEXT = 'choose-next',
   CHOOSE_PREV = 'choose-prev',
   SELECT_ITEM = 'select-item',
+
+  SHORTCUT_UPDATE = 'shortcut-update',
 }

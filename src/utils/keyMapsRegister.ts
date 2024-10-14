@@ -1,27 +1,13 @@
-import type { ShortcutEvent } from '@tauri-apps/plugin-global-shortcut'
-import { systemKeyMaps } from '@/constants/keyMaps'
+import { Events } from '@/constants/eventEnums'
+import { useSettingStoreWithOut } from '@/store/settingStore'
 import { emitEvent } from '@/utils/eventHandler'
-import { register, unregister } from '@tauri-apps/plugin-global-shortcut'
+import { register, unregisterAll } from '@tauri-apps/plugin-global-shortcut'
 
-// 便于处理开发环境下注册快捷键
-async function registerShortcuts(shortcuts: string[], callback: (e: ShortcutEvent) => void) {
-  for (const shortcut of shortcuts) {
-    await unregister(shortcut)
-    await register(shortcut, (e) => {
-      e.state === 'Pressed' && callback(e)
-    })
-  }
-}
+const settingStore = useSettingStoreWithOut()
 
 export async function initKeyMaps() {
-  if (typeof window === 'undefined') {
-    return
-  }
-
-  // 注册快捷键
-  systemKeyMaps.forEach((value, key) => {
-    registerShortcuts(key, () => {
-      emitEvent(value)
-    })
+  await unregisterAll()
+  await register(settingStore.shortcut, (e) => {
+    e.state === 'Pressed' && emitEvent(Events.TOGGLE_MAIN_WINDOW)
   })
 }

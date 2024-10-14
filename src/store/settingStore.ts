@@ -8,6 +8,8 @@ import { defineStore } from 'pinia'
 interface State {
   codeTheme: BundledTheme
   autoStart: boolean
+  shortcutHotKey: string
+  shortcutModifierKey: string
 }
 
 const tauriStore = useTauriStore()
@@ -16,10 +18,19 @@ export const useSettingStore = defineStore('setting', {
   state: (): State => ({
     codeTheme: 'github-dark',
     autoStart: false,
+    shortcutHotKey: '',
+    shortcutModifierKey: '',
   }),
+  getters: {
+    shortcut(state) {
+      return `${state.shortcutModifierKey}+${state.shortcutHotKey}`
+    },
+  },
   actions: {
     async initSettingStore() {
       this.autoStart = await isEnabled()
+      this.shortcutHotKey = await tauriStore.get(TAURI_STORE_KEYS.SHORTCUT_HOT_KEY) || 'space'
+      this.shortcutModifierKey = await tauriStore.get(TAURI_STORE_KEYS.SHORTCUT_MODIFIER_KEY) || 'alt'
     },
     setCodeTheme(theme: BundledTheme) {
       this.codeTheme = theme
@@ -35,6 +46,20 @@ export const useSettingStore = defineStore('setting', {
     getAutoStart() {
       return this.autoStart
     },
+    async setShortcutHotKey(hotKey: string) {
+      this.shortcutHotKey = hotKey
+      await tauriStore.set(TAURI_STORE_KEYS.SHORTCUT_HOT_KEY, hotKey)
+    },
+    getShortcutHotKey() {
+      return this.shortcutHotKey
+    },
+    async setShortcutModifierKey(modifierKey: string) {
+      this.shortcutModifierKey = modifierKey
+      await tauriStore.set(TAURI_STORE_KEYS.SHORTCUT_MODIFIER_KEY, modifierKey)
+    },
+    getShortcutModifierKey() {
+      return this.shortcutModifierKey
+    },
   },
 })
 
@@ -43,6 +68,6 @@ export function useSettingStoreWithOut() {
 }
 
 export async function setupSettingStore() {
-  const settingStore = useSettingStore()
+  const settingStore = useSettingStoreWithOut()
   await settingStore.initSettingStore()
 }

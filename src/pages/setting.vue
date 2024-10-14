@@ -8,14 +8,16 @@ import { Select, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/
 import SelectContent from '@/components/ui/select/SelectContent.vue'
 import { Switch } from '@/components/ui/switch'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { Events } from '@/constants/eventEnums'
 import { useSettingStore } from '@/store/settingStore'
 import { useSnippetsStore } from '@/store/snippetsStoreV2'
+import { emitEvent } from '@/utils/eventHandler'
 import { disable, enable } from '@tauri-apps/plugin-autostart'
 import { BaseDirectory, writeTextFile } from '@tauri-apps/plugin-fs'
-import { useKeyModifier } from '@vueuse/core'
-import { CircleHelp, Command, Option, Plus, Regex } from 'lucide-vue-next'
+import { onClickOutside, useKeyModifier } from '@vueuse/core'
+import { CircleHelp, Command, Option, Plus } from 'lucide-vue-next'
 import { bundledThemesInfo } from 'shiki'
-import { onMounted, onUnmounted, ref, watch } from 'vue'
+import { onMounted, onUnmounted, ref, useTemplateRef, watch } from 'vue'
 import { toast } from 'vue-sonner'
 
 type MethodsWithSetPrefix<T> = {
@@ -60,24 +62,24 @@ async function loadLocal() {
         return
       }
 
-      Object.entries(data).forEach(([key, value]) => {
+      function getSetFnName<T extends typeof snippetStore | typeof settingStore>(key: string) {
+        return `set${key.charAt(0).toUpperCase() + key.slice(1)}` as MethodsWithSetPrefix<T>
+      }
+      Object.entries(data).forEach(async ([key, value]) => {
         if (key in snippetStore.$state) {
           const fnName = getSetFnName<typeof snippetStore>(key)
-          snippetStore[fnName](value as any)
+          await snippetStore[fnName](value as any)
         }
         else if (key in settingStore.$state) {
           const fnName = getSetFnName<typeof settingStore>(key)
-          settingStore[fnName](value as never)
+          await settingStore[fnName](value as never)
         }
       })
       toast.success('load success')
     }
   })
-  input.remove()
-}
 
-function getSetFnName<T extends typeof snippetStore | typeof settingStore>(key: string) {
-  return `set${key.charAt(0).toUpperCase() + key.slice(1)}` as MethodsWithSetPrefix<T>
+  input.remove()
 }
 
 async function saveLocal() {
@@ -97,11 +99,19 @@ const altKey = useKeyModifier('Alt')
 const controlKey = useKeyModifier('Control')
 const metaKey = useKeyModifier('Meta')
 
+const shortcutRef = useTemplateRef('shortcutRef')
 const isShortcutFocus = ref(false)
-const hotKey = ref('')
+
+onClickOutside(shortcutRef, () => {
+  isShortcutFocus.value = false
+})
 
 const excludedKeys = ['alt', 'meta', 'control', 'shift', 'tab', 'escape', 'enter']
-function testKey(e: KeyboardEvent) {
+async function testKey(e: KeyboardEvent) {
+  // 如果没有聚焦,不处理
+  if (!isShortcutFocus.value) {
+    return
+  }
   const testRes = excludedKeys.some(excludedKey => e.key.toLowerCase().includes(excludedKey))
   // 不处理特殊按键
   if (testRes) {
@@ -110,14 +120,27 @@ function testKey(e: KeyboardEvent) {
   // 当指定修饰键按下且shortcut聚焦时,处理事件
   if (altKey.value || controlKey.value || metaKey.value) {
     if (e.code.startsWith('Key')) {
-      hotKey.value = e.code.slice(3)
+      await settingStore.setShortcutHotKey(e.code.slice(3))
     }
     else if (e.code.startsWith('Digit')) {
-      hotKey.value = e.code.slice(5)
+      await settingStore.setShortcutHotKey(e.code.slice(5))
     }
     else {
-      hotKey.value = e.code
+      await settingStore.setShortcutHotKey(e.code)
     }
+
+    // 在这里set
+    await settingStore.setShortcutModifierKey(
+      altKey.value
+        ? 'alt'
+        : controlKey.value
+          ? 'control'
+          : metaKey.value
+            ? 'meta'
+            : '',
+    )
+    isShortcutFocus.value = false
+    emitEvent(Events.SHORTCUT_UPDATE)
   }
 }
 
@@ -127,18 +150,6 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener('keyup', testKey)
 })
-
-watch(
-  () => isShortcutFocus.value,
-  (val) => {
-    if (val) {
-      hotKey.value = 'press'
-    }
-    else {
-      hotKey.value = ''
-    }
-  },
-)
 </script>
 
 <template>
@@ -196,17 +207,31 @@ watch(
         </CardHeader>
         <CardContent>
           <div
-            class="flex-center mx-auto w-fit gap-2 p-2 px-4"
+            ref="shortcutRef"
+            class="flex-center mx-auto w-fit gap-2 rounded-sm p-2 px-4"
             :class="{ 'ring-4 ring-blue-500': isShortcutFocus }"
             @click="isShortcutFocus = true"
           >
             <div
               class="flex items-center gap-2"
             >
-              <div class="icon-wrapper" :class="{ active: (controlKey || metaKey) && isShortcutFocus }">
+              <div
+                class="icon-wrapper"
+                :class="{
+                  active: (controlKey || metaKey) && isShortcutFocus
+                    || settingStore.shortcutModifierKey === 'control'
+                    || settingStore.shortcutModifierKey === 'meta',
+                }"
+              >
                 <Command class="icon" />
               </div>
-              <div class="icon-wrapper" :class="{ active: (altKey && isShortcutFocus) }">
+              <div
+                class="icon-wrapper"
+                :class="{
+                  active: (altKey && isShortcutFocus)
+                    || settingStore.shortcutModifierKey === 'alt',
+                }"
+              >
                 <Option class="icon" />
               </div>
             </div>
@@ -214,7 +239,7 @@ watch(
             <div
               class="h-8 w-20 select-none rounded-md bg-background/50 px-2 py-1 text-foreground"
             >
-              {{ hotKey }}
+              {{ settingStore.shortcutHotKey }}
             </div>
 
             <TooltipProvider :delay-duration="100">

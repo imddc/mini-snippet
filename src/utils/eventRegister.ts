@@ -2,6 +2,7 @@ import { Events } from '@/constants/eventEnums'
 import { WindowLabel } from '@/constants/windowEnums'
 import { useWindowStoreWithOut } from '@/store/windowStore'
 import { emitEvent, useEvent } from '@/utils/eventHandler'
+import { initKeyMaps } from '@/utils/keyMapsRegister'
 import { useTauriStore } from '@/utils/tauriStore'
 import { getWindow } from '@/utils/window'
 import { PhysicalSize } from '@tauri-apps/api/dpi'
@@ -89,5 +90,10 @@ export async function registerEvents() {
       contentWindow.hide()
       windowStore.isContentWindowShow = false
     }
+  })
+
+  // 监听快捷键更新
+  useEvent(Events.SHORTCUT_UPDATE, () => {
+    initKeyMaps()
   })
 }

@@ -10,7 +10,6 @@ async function bootstrap() {
   const app = createApp(App)
   setupRouter(app)
   await setupStore(app)
-
   app.mount('#app')
 
   await initKeyMaps()
