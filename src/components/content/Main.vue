@@ -67,6 +67,10 @@ function editCategory(categoryId: string) {
 
 function deleteCategory(categoryId: string) {
   snippetsStore.deleteCategory(categoryId)
+
+  if (!snippetsStore.categories.length) {
+    selectedCategory.value = undefined
+  }
 }
 
 function handleCategoryChange(value: CategoryV2 | null) {
