@@ -13,3 +13,14 @@
 .category-wrap {
   @apply rounded-lg bg-gray-700/90 shadow-md overflow-hidden;
 }
+
+.icon-wrapper {
+  @apply flex-center rounded-md bg-gray-500/50 p-1;
+  &.active {
+    @apply bg-gray-500/50 text-blue-500/50;
+  }
+
+  .icon {
+    @apply size-6;
+  }
+}

@@ -12,8 +12,10 @@ import { useSettingStore } from '@/store/settingStore'
 import { useSnippetsStore } from '@/store/snippetsStoreV2'
 import { disable, enable } from '@tauri-apps/plugin-autostart'
 import { BaseDirectory, writeTextFile } from '@tauri-apps/plugin-fs'
+import { useKeyModifier } from '@vueuse/core'
+import { Command, Option } from 'lucide-vue-next'
 import { bundledThemesInfo } from 'shiki'
-import { watch } from 'vue'
+import { ref, watch } from 'vue'
 import { toast } from 'vue-sonner'
 
 type MethodsWithSetPrefix<T> = {
@@ -27,6 +29,16 @@ function updateCodeTheme(theme: string) {
   settingStore.setCodeTheme(theme as BundledTheme)
 }
 
+watch(() => settingStore.autoStart, async (val) => {
+  if (val) {
+    await enable()
+  }
+  else {
+    await disable()
+  }
+})
+
+// persistence
 async function loadLocal() {
   const input = document.createElement('input')
   input.type = 'file'
@@ -80,14 +92,25 @@ async function saveLocal() {
   toast.success('saved to desktop')
 }
 
-watch(() => settingStore.autoStart, async (val) => {
-  if (val) {
-    await enable()
-  }
-  else {
-    await disable()
-  }
-})
+// shortcuts
+const altKey = useKeyModifier('Alt')
+const controlKey = useKeyModifier('Control')
+const metaKey = useKeyModifier('Meta')
+
+const isInputFocus = ref(false)
+const hotKey = ref('')
+
+watch(
+  () => isInputFocus.value,
+  (val) => {
+    if (val) {
+      hotKey.value = 'press'
+    }
+    else {
+      hotKey.value = ''
+    }
+  },
+)
 </script>
 
 <template>
@@ -143,8 +166,21 @@ watch(() => settingStore.autoStart, async (val) => {
           </CardTitle>
           <CardDescription>input a shortcut</CardDescription>
         </CardHeader>
-        <CardContent>
-          <Input placeholder="input a shortcut" />
+        <CardContent class="flex-center gap-2">
+          <div class="flex items-center gap-2">
+            <div class="icon-wrapper" :class="{ active: (controlKey || metaKey) && isInputFocus }">
+              <Command class="icon" />
+            </div>
+            <div class="icon-wrapper" :class="{ active: (altKey && isInputFocus) }">
+              <Option class="icon" />
+            </div>
+          </div>
+          <input
+            class="h-8 w-20 select-none rounded-md bg-background/50 px-2 py-1 text-foreground focus:ring-2 focus:ring-blue-500"
+            :value="hotKey"
+            @focus="isInputFocus = true"
+            @blur="isInputFocus = false"
+          >
         </CardContent>
       </Card>
 
