@@ -29,6 +29,9 @@ export const useSnippetsStore = defineStore('snippetsV2', {
       this.snippets = await store?.get(TAURI_STORE_KEYS.SNIPPETS) || snippetsV2
       await store?.save()
     },
+    setCategories(categories: CategoryV2[]) {
+      this.categories = categories
+    },
     // category curd
     getCategory(categoryId: string): CategoryV2 | undefined {
       return this.categories.find(category => category.id === categoryId)
@@ -59,6 +62,9 @@ export const useSnippetsStore = defineStore('snippetsV2', {
     },
 
     // snippet curd
+    setSnippets(snippets: SnippetV2[]) {
+      this.snippets = snippets
+    },
     getSnippet(snippetId: string): SnippetV2 | undefined {
       return this.snippets.find(snippet => snippet.id === snippetId)
     },

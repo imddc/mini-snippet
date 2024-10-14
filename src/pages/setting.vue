@@ -13,13 +13,15 @@ import { useSnippetsStore } from '@/store/snippetsStoreV2'
 import { disable, enable } from '@tauri-apps/plugin-autostart'
 import { BaseDirectory, writeTextFile } from '@tauri-apps/plugin-fs'
 import { bundledThemesInfo } from 'shiki'
-import { ref, watch } from 'vue'
+import { watch } from 'vue'
 import { toast } from 'vue-sonner'
+
+type MethodsWithSetPrefix<T> = {
+  [K in keyof T]: T[K] extends (...args: any[]) => any ? (K extends `set${string}` ? K : never) : never;
+}[keyof T]
 
 const settingStore = useSettingStore()
 const snippetStore = useSnippetsStore()
-
-const test = ref<Record<string, string>>({})
 
 function updateCodeTheme(theme: string) {
   settingStore.setCodeTheme(theme as BundledTheme)
@@ -37,10 +39,34 @@ async function loadLocal() {
         return
       }
       const text = await file.text()
-      test.value = JSON.parse(text)
+      const requiredKeys = Object.keys({ ...snippetStore.$state, ...settingStore.$state })
+      const data = JSON.parse(text)
+
+      const diffKeys = requiredKeys.filter(key => !(key in data))
+      if (diffKeys.length > 0) {
+        toast.error('invalid config file')
+        return
+      }
+
+      Object.entries(data).forEach(([key, value]) => {
+        if (key in snippetStore.$state) {
+          const fnName = getSetFnName<typeof snippetStore>(key)
+          snippetStore[fnName](value as any)
+        }
+        else if (key in settingStore.$state) {
+          const fnName = getSetFnName<typeof settingStore>(key)
+          settingStore[fnName](value as never)
+        }
+      })
+
+      toast.success('load success')
     }
   })
   input.remove()
+}
+
+function getSetFnName<T extends typeof snippetStore | typeof settingStore>(key: string) {
+  return `set${key.charAt(0).toUpperCase() + key.slice(1)}` as MethodsWithSetPrefix<T>
 }
 
 async function saveLocal() {
