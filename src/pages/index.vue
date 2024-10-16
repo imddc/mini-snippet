@@ -40,7 +40,6 @@ async function select(numberKey?: string) {
   if (!selectedSnippet.value) {
     return
   }
-
   if (numberKey) {
     if (foundSnippets.value.length) {
       chooseSnippetsIndex.value = Number.parseInt(numberKey) - 1
@@ -51,7 +50,7 @@ async function select(numberKey?: string) {
   else {
     await pasteMock(selectedSnippet.value.content)
   }
-  // quit()
+  quit()
 }
 
 function quit() {

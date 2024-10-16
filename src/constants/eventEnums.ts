@@ -3,6 +3,8 @@ export enum Events {
   CLOSE_MAIN_WINDOW = 'close-main-window',
   TOGGLE_MAIN_WINDOW = 'toggle-main-window',
 
+  MAIN_WINDOW_FOCUS = 'main-window-focus',
+
   CHANGE_MAIN_WINDOW_HEIGHT = 'change-main-window-height',
   SEARCH_INPUT_FOCUS = 'search-input-focus',
   STORE_MUTATION = 'store-mutation',

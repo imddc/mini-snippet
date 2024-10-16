@@ -1,3 +1,10 @@
+/*
+ * @Author: imddc easyhoo2426@163.com
+ * @Date: 2024-10-05 19:50:04
+ * @LastEditors: imddc easyhoo2426@163.com
+ * @LastEditTime: 2024-10-16 16:33:56
+ * @Description:
+ */
 import { Events } from '@/constants/eventEnums'
 import { WindowLabel } from '@/constants/windowEnums'
 import { useWindowStoreWithOut } from '@/store/windowStore'
@@ -18,6 +25,9 @@ export async function registerEvents() {
       setTimeout(() => {
         emitEvent(Events.CLOSE_MAIN_WINDOW)
       })
+    }
+    else {
+      emitEvent(Events.OPEN_MAIN_WINDOW)
     }
   })
 
@@ -49,8 +59,8 @@ export async function registerEvents() {
       return
     }
     await mainWindow.show()
-    await mainWindow.setFocus()
-    windowStore.isMainWindowShow = true
+
+    emitEvent(Events.MAIN_WINDOW_FOCUS)
   })
 
   useEvent(Events.CLOSE_MAIN_WINDOW, async () => {
@@ -62,6 +72,15 @@ export async function registerEvents() {
 
   useEvent(Events.TOGGLE_MAIN_WINDOW, async () => {
     emitEvent(windowStore.isMainWindowShow ? Events.CLOSE_MAIN_WINDOW : Events.OPEN_MAIN_WINDOW)
+  })
+
+  useEvent(Events.MAIN_WINDOW_FOCUS, async () => {
+    if (!mainWindow) {
+      return
+    }
+
+    await mainWindow.setFocus()
+    windowStore.isMainWindowShow = true
   })
 
   useEvent(Events.CHANGE_MAIN_WINDOW_HEIGHT, async (listLength: number) => {
